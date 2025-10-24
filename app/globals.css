@@ -1,0 +1,490 @@
+/* --- БАЗОВІ СТИЛІ --- */
+
+html {
+    font-size: 16px;
+}
+
+body {
+    /* Тепер фон білий. Сірий фон (який був на макеті входу) зникає. */
+    background-color: #ffffff;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --- КОНТЕЙНЕРИ СТОРІНОК --- */
+.pageContainer {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Центрує контент на сторінці Входу/Реєстрації */
+.loginPageContainer {
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f0f2f5; /* Повертаємо сірий фон ТІЛЬКИ для сторінки входу */
+}
+
+/* Для сторінок меню (вони білі) */
+.menuPageContainer {
+    background-color: #fff;
+    justify-content: flex-start;
+}
+
+/* --- ОБГОРТКИ КОНТЕНТУ --- */
+/* Обгортка для Входу/Реєстрації (вузька) */
+.loginContentWrapper {
+    background-color: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin: 0 auto; /* Центруємо */
+}
+
+/* Обгортка для Menu Primary (середня) */
+.primaryMenuContentWrapper {
+    width: 100%;
+    max-width: 600px; /* Обмежуємо ширину списку меню */
+    margin: 0 auto; /* Центруємо */
+}
+
+/* Обгортка для Menu Secondary (широка, на весь екран) */
+.secondaryMenuContentWrapper {
+    width: 100%;
+    height: 100vh; /* Займає всю висоту */
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* --- СТИЛІ СТОРІНКИ ВХОДУ --- */
+.loginCloseBtn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    color: #aaa;
+    text-decoration: none;
+    font-weight: bold;
+}
+.loginTitle {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 0 2rem 0;
+    color: #222;
+    text-align: left;
+}
+.inputGroup { margin-bottom: 1rem; }
+.loginInput {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+.loginInput::placeholder { color: #999; }
+.loginInput:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+.loginSubmitBtn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+}
+.loginSubmitBtn:hover { background-color: #45a049; }
+.googleBtn {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: white;
+    color: #555;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+.googleBtn:hover { background-color: #f9f9f9; }
+.googleIcon { font-weight: bold; color: #E64A19; }
+.loginLinks { display: flex; justify-content: space-between; margin-top: 1.5rem; }
+.loginLink { color: #555; text-decoration: underline; font-size: 0.9rem; cursor: pointer; }
+.loginLink:hover { color: #111; }
+.loginError {
+    color: #D32F2F;
+    background-color: #FFEBEE;
+    border: 1px solid #FFCDD2;
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* --- СТИЛІ MENU PRIMARY --- */
+.primaryMenuScreen { /* Цей клас більше не потрібен, але ми його залишимо */ }
+.menuHeaderImage {
+    width: 100%; /* Займає ширину .primaryMenuContentWrapper (600px) */
+    height: 200px;
+    background-color: #f0f0f0;
+    background-image: url('https://images.unsplash.com/photo-1559396229-c7d6c636f33d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fHJlc3RhdXJhbnQlMjBhd25pbmd8ZW58MHx8fHwxNjY2MzM2ODIz&ixlib-rb-1.2.1&q=80&w=400');
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px 10px 0 0;
+    position: relative; /* Для іконки профілю */
+}
+.primaryMenuScreen .profileIcon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: white;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.menuProfileCard {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 1rem;
+    margin: -60px 1.5rem 1.5rem 1.5rem; /* Піднімаємо поверх зображення */
+    position: relative;
+    z-index: 5;
+    text-align: left;
+    display: grid;
+    grid-template-areas: "avatar info" "level level";
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1rem;
+    align-items: center;
+}
+.menuProfileAvatar { grid-area: avatar; width: 60px; height: 60px; border-radius: 50%; background-color: #f0f0f0; border: 3px solid white; }
+.menuProfileInfo { grid-area: info; }
+.menuProfileInfo h2 { margin: 0; font-size: 1.2rem; }
+.menuProfileInfo p { margin: 0; color: #FFC107; }
+.menuProfileInfo span { font-size: 0.9rem; color: #777; }
+.menuProfileLevel { grid-area: level; display: flex; align-items: center; gap: 0.5rem; }
+.menuProfileLevel span { font-size: 0.8rem; font-weight: bold; color: #777; }
+.menuProgressBarContainer { flex-grow: 1; background-color: #e0e0e0; border-radius: 50px; height: 10px; overflow: hidden; }
+.menuProgressBarFill { height: 100%; background-color: #4CAF50; border-radius: 50px; }
+.menuNavList {
+    display: flex;
+    flex-direction: column;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    text-align: left;
+    gap: 0.5rem;
+    margin: 0;
+}
+.menuNavItem { text-decoration: none; color: #333; font-size: 1.1rem; font-weight: 500; padding: 1rem; border-bottom: 1px solid #f0f0f0; border-radius: 10px; transition: background-color 0.2s; }
+.menuNavItem:hover { background-color: #f9f9f9; }
+.menuNavItem:last-child { border-bottom: none; }
+
+/* --- СТИЛІ MENU SECONDARY --- */
+.secondaryMenuScreenNew { /* Цей клас більше не потрібен */ }
+.secondaryMenuHeaderNew {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+
+    /* Обгортка для хедера */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+.backButton { font-size: 2rem; text-decoration: none; color: #333; font-weight: bold; }
+.restaurantInfo { text-align: left; flex-grow: 1; }
+.restaurantInfo h3 { margin: 0; font-size: 1.1rem; }
+.restaurantInfo p { margin: 0; font-size: 0.9rem; color: #777; }
+.headerIcons { display: flex; gap: 1.5rem; }
+.cartIcon { font-size: 1.5rem; }
+.profileIcon { font-size: 1.5rem; cursor: pointer; z-index: 10; }
+
+.secondaryMenuBody {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+
+    /* Обгортка для тіла меню */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.secondarySideNav {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-right: 1px solid #f0f0f0;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    width: 200px;
+    overflow-y: auto;
+}
+.sideNavItem { text-decoration: none; color: #333; padding: 0.75rem 1rem; border-radius: 8px; text-align: left; font-weight: 500; }
+.sideNavItem.active, .sideNavItem:hover { background-color: #f0f0f0; }
+
+.dishListNew {
+    flex-grow: 1;
+    padding: 1.5rem 3rem;
+    overflow-y: auto;
+    text-align: left;
+}
+.dishListHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.dishListHeader h3 { margin: 0; font-size: 1.3rem; }
+.dishProgress { display: flex; align-items: center; gap: 0.5rem; }
+.dishProgress span { font-size: 0.9rem; color: #777; font-weight: 500; }
+.dishProgressBar { width: 100px; height: 8px; background-color: #e0e0e0; border-radius: 50px; }
+.dishProgressBarFill { height: 100%; background-color: #4CAF50; border-radius: 50px; }
+
+.dishItemNew { display: flex; gap: 1rem; border-bottom: 1px solid #f0f0f0; padding: 1.5rem 0; }
+.dishItemNew:last-child { border-bottom: none; }
+.dishInfoNew { flex-grow: 1; }
+.dishInfoNew h4 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+.dishInfoNew p { margin: 0 0 0.5rem; font-size: 0.9rem; color: #777; }
+.dishDetailsNew { display: flex; align-items: baseline; gap: 0.5rem; }
+.dishPriceNew { font-size: 1rem; font-weight: bold; }
+.dishOldPrice { font-size: 0.9rem; color: #aaa; text-decoration: line-through; }
+.dishCaloriesNew { display: flex; gap: 4px; margin-top: 0.5rem; }
+.caloriesBar { height: 6px; border-radius: 3px; }
+.caloriesBar.red { width: 30px; background-color: #F44336; }
+.caloriesBar.green { width: 20px; background-color: #4CAF50; }
+
+.dishImageContainerNew { position: relative; flex-shrink: 0; }
+.dishImageNew { border-radius: 10px; object-fit: cover; width: 90px; height: 90px; }
+.dishAddButtonNew {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    background-color: white;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: #4CAF50;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 1.8rem;
+    font-weight: 300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 35px;
+}
+
+/* --- СТИЛІ МОДАЛЬНОГО ВІКНА ПРОФІЛЮ --- */
+.profileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5vh;
+    z-index: 1000;
+    padding: 5vh 1rem;
+}
+.profileModal {
+    background-color: white;
+    color: #333;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.profileCloseButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #aaa;
+    cursor: pointer;
+}
+.profileHeader { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.profileAvatar {
+    width: 50px;
+    height: 50px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+.profileInfo h2 { margin: 0; font-size: 1.2rem; }
+.profileInfo p { margin: 0; color: #777; }
+.profileStatsCard {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+}
+.profileMyItemsButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #3F51B5;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+.profileAchievements h3 {
+    font-size: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.profileAchievements p { margin: 0.25rem 0; }
+
+
+/* --- АДАПТИВНІСТЬ --- */
+@media (max-width: 768px) {
+    /* На мобільних ми повертаємо сторінки до 100% ширини/висоти */
+    .loginPageContainer {
+        padding: 0;
+    }
+    .loginContentWrapper {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        padding: 1.5rem;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .primaryMenuContentWrapper {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .menuProfileCard {
+        margin: -60px 1rem 1rem 1rem; /* Зменшуємо відступи */
+    }
+    .menuNavList {
+        padding: 0 1rem 1rem 1rem;
+    }
+
+    .secondaryMenuContentWrapper {
+        height: 100vh;
+    }
+    .secondaryMenuBody {
+        flex-direction: column; /* Складаємо меню і страви вертикально */
+        height: auto;
+        flex-grow: 1;
+        width: 100%;
+    }
+    .secondarySideNav {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }
+    .sideNavItem { padding: 0.5rem 1rem; flex-shrink: 0; }
+    .dishListNew { padding: 1rem; }
+    .secondaryMenuHeaderNew { padding: 1rem; }
+    .dishItemNew { gap: 0.5rem; }
+    .dishImageNew { width: 70px; height: 70px; }
+    .dishAddButtonNew { width: 30px; height: 30px; font-size: 1.5rem; line-height: 30px; }
+}
+
+
+/* --- СТИЛІ ДЛЯ ВИПАДАЮЧОГО МЕНЮ (ВИПРАВЛЕНО) --- */
+
+.sideNavItem.with-dropdown {
+    cursor: pointer;
+}
+
+/* Список, що випадає (тепер він 'inline') */
+.dropdown-menu {
+    display: none; /* Сховано за замовчуванням */
+    list-style: none;
+    /* Відступ зліва, щоб показати вкладеність */
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin: 0;
+    background-color: #fcfcfc; /* Ледь помітний фон */
+    border-radius: 0 0 8px 8px; /* Заокруглення знизу */
+}
+
+/* Показуємо при наведенні */
+.sideNavItem.with-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Стиль для батьківського елемента при наведенні */
+.sideNavItem.with-dropdown:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px 8px 0 0; /* Закруглюємо тільки верхні кути */
+}
+/* Переконуємось, що прості посилання теж гарно виглядають */
+.sideNavItem:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+/* Посилання всередині випадаючого меню */
+.sideNavItem-sub {
+    display: block;
+    text-decoration: none;
+    color: #333;
+    padding: 0.5rem 0.75rem; /* Зменшуємо відступи */
+    border-radius: 6px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.sideNavItem-sub:hover {
+    background-color: #e9e9e9;
+}

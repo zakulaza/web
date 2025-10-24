@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Модель користувача
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique // email буде унікальним
+  password  String   // Тут буде зберігатись хешований пароль
+  role      String   @default("CUSTOMER") // Наприклад, CUSTOMER або OWNER
+  createdAt DateTime @default(now())
+}
+// Модель для категорій (Кухня, Напої і т.д.)
+model Category {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  dishes Dish[] // Зв'язок: одна категорія має багато страв
+}
+
+// Модель для страв
+model Dish {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float    // Ціна
+  calories    Int      // Калорії (для зеленої/червоної іконки)
+  imageUrl    String   // Посилання на фото страви
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+}
