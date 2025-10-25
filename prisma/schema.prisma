@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,29 +10,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Модель користувача
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique // email буде унікальним
-  password  String   // Тут буде зберігатись хешований пароль
-  role      String   @default("CUSTOMER") // Наприклад, CUSTOMER або OWNER
-  createdAt DateTime @default(now())
-}
-// Модель для категорій (Кухня, Напої і т.д.)
-model Category {
-  id     Int    @id @default(autoincrement())
-  name   String @unique
-  dishes Dish[] // Зв'язок: одна категорія має багато страв
+enum Role {
+  CUSTOMER
+  OWNER
 }
 
-// Модель для страв
-model Dish {
+// --- ОНОВЛЕНА Модель Користувача ---
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String?  // Google надасть ім'я
+  email         String?  @unique // Email може бути null доки не верифіковано
+  emailVerified DateTime?
+  image         String?  // Google надасть фото профілю
+  password      String?  // Пароль стає опціональним (для Google входу він не потрібен)
+
+  role      Role     @default(CUSTOMER)
+  level     Int      @default(1)
+  progress  Int      @default(0)
+
+  // Зв'язки NextAuth
+  accounts Account[]
+  sessions Session[]
+
+  // Ваші зв'язки
+  restaurants Restaurant[]
+  orders      Order[]
+}
+
+// --- НОВІ МОДЕЛІ ДЛЯ NEXT-AUTH ---
+model Account {
+  id                 Int       @id @default(autoincrement())
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- Ваші існуючі моделі (без змін) ---
+model Restaurant {
   id          Int      @id @default(autoincrement())
   name        String
-  description String
-  price       Float    // Ціна
-  calories    Int      // Калорії (для зеленої/червоної іконки)
-  imageUrl    String   // Посилання на фото страви
+  description String?
+  imageUrl    String?
+  ownerId     Int
+  owner       User     @relation(fields: [ownerId], references: [id])
+  categories  Category[]
+  orders      Order[]
+}
+
+model Category {
+  id           Int     @id @default(autoincrement())
+  name         String
+  description  String?
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  dishes       Dish[]
+}
+
+model Dish {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  calories    Int?
+  imageUrl    String?
   categoryId  Int
   category    Category @relation(fields: [categoryId], references: [id])
+}
+
+model Order {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  totalPrice   Float
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
 }

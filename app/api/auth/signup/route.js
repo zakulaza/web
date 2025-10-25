@@ -1,11 +1,10 @@
 // Шлях: /app/api/auth/signup/route.js
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 // Вам знадобиться бібліотека для хешування паролів
 // npm install bcryptjs
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+
 
 export async function POST(request) {
     try {

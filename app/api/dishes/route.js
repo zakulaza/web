@@ -1,8 +1,8 @@
 // app/api/dishes/route.js
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma'; // ПРАВИЛЬНО
 
-const prisma = new PrismaClient();
+
 
 // --- 1. Функція для ОТРИМАННЯ страв (GET) ---
 export async function GET(request) {

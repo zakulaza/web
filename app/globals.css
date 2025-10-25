@@ -488,3 +488,642 @@ body {
 .sideNavItem-sub:hover {
     background-color: #e9e9e9;
 }
+/* --- СТИЛІ ДЛЯ НОВОГО ЛЕНДІНГУ (Breadcrump) --- */
+
+/* Контейнер для лендінгу */
+.landingContentWrapper {
+    width: 100%;
+    max-width: 1100px; /* Обмежуємо ширину лендінгу */
+    margin: 0 auto; /* Центруємо */
+    padding: 0 2rem;
+    box-sizing: border-box;
+}
+
+/* Хедер */
+.landingHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.landingLogo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #000;
+}
+
+.landingNav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.landingLoginBtn {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+/* Секції */
+.landingSection {
+    margin-bottom: 4rem;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.sectionHeader h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #000;
+}
+
+.seeAllLink {
+    text-decoration: none;
+    color: #3f51b5;
+    font-weight: 500;
+}
+
+/* Зелений банер (QR / Як це працює) */
+.greenBanner {
+    background-color: #4caf50;
+    border-radius: 20px;
+    padding: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.greenBanner h2 {
+    font-size: 2rem;
+    margin: 0 0 1rem 0;
+    max-width: 400px;
+}
+.greenBanner p {
+    font-size: 1rem;
+    margin: 0 0 1.5rem 0;
+    opacity: 0.9;
+}
+
+.bannerBtn {
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    border: 1px solid white;
+}
+.bannerBtn.light {
+    background-color: white;
+    color: #4caf50;
+}
+.bannerBtn.dark {
+    background-color: transparent;
+    color: white;
+}
+.bannerImage {
+    /* Тут буде зображення телефону */
+    width: 150px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+/* Список ресторанів */
+.establishmentsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.restaurantCard {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.restaurantImage {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.restaurantCard h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+}
+.restaurantCard p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: #777;
+}
+.restaurantRating {
+    font-size: 0.9rem;
+    color: #ffc107;
+}
+
+/* Футер */
+.landingFooter {
+    border-top: 1px solid #eee;
+    padding: 3rem 0;
+    display: flex;
+    justify-content: space-between;
+    color: #777;
+}
+.footerLinks {
+    display: flex;
+    gap: 3rem;
+}
+.footerLinks strong {
+    color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.footerLinks p {
+    margin: 0;
+}
+
+/* Адаптивність для банерів */
+@media (max-width: 768px) {
+    .greenBanner {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+    }
+    .bannerImage {
+        margin-top: 2rem;
+    }
+    .landingFooter {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}
+/* --- СТИЛІ ДЛЯ MANAGER MODE --- */
+
+/* Обгортка для контенту адмін-панелі */
+.manageContentWrapper {
+    width: 100%;
+    max-width: 1200px; /* Широкий контент */
+    margin: 0 auto;
+    padding: 2rem 3rem;
+    box-sizing: border-box;
+}
+
+/* Хедер Адмін-панелі */
+.manageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.manageHeaderTitle h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    color: #555;
+}
+
+.manageHeaderUser {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Секції в адмінці */
+.manageSection {
+    margin-bottom: 3rem;
+}
+
+.manageSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Вирівнюємо по верху */
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.manageSectionHeader h2 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.8rem;
+}
+.manageSectionHeader p {
+    margin: 0;
+    color: #777;
+}
+
+.manageAddButton {
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap; /* Щоб текст не переносився */
+}
+
+/* Список ресторанів */
+.manageRestaurantList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.manageRestaurantCard {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    overflow: hidden; /* Обрізаємо зображення */
+}
+
+.manageRestaurantImage {
+    position: relative;
+    width: 200px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+}
+
+.manageRestaurantInfo {
+    flex-grow: 1;
+    text-align: left;
+}
+.manageRestaurantInfo h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+}
+.manageRestaurantInfo p {
+    margin: 0 0 1rem 0;
+    color: #777;
+    font-size: 0.9rem;
+    /* Обмеження тексту */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.manageRestaurantStats {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+.manageRestaurantStats strong {
+    color: #000;
+}
+
+.manageRestaurantActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.actionIcon {
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #777;
+}
+.actionIcon:hover {
+    color: #333;
+}
+
+.manageMenuButton {
+    background-color: #f0f2f5;
+    color: #3f51b5;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* Заглушка для порожнього списку */
+.noDataText {
+    color: #777;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Текст завантаження */
+.loadingText {
+    padding: 2rem;
+    text-align: center;
+    color: #777;
+}
+
+/* Адаптивність для адмін-панелі */
+@media (max-width: 900px) {
+    .manageContentWrapper {
+        padding: 1.5rem;
+    }
+    .manageRestaurantCard {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    .manageRestaurantImage {
+        width: 100%;
+        height: 150px; /* Вище зображення */
+    }
+    .manageRestaurantActions {
+        margin-top: 1rem;
+        justify-content: space-between;
+    }
+}
+@media (max-width: 600px) {
+    .manageSectionHeader {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .manageAddButton {
+        width: 100%;
+        text-align: center;
+    }
+    .manageRestaurantStats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+/* --- СТИЛІ ДЛЯ МОДАЛЬНИХ ВІКОН АДМІНКИ --- */
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 0 1.5rem 0;
+    color: #222;
+    text-align: left;
+    padding-right: 2rem; /* Щоб не накладалося на кнопку закриття */
+}
+
+/* Перевизначаємо стиль для полів вводу в модалці */
+.profileModal .inputGroup {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+.profileModal label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+.profileModal .loginInput {
+    padding: 0.8rem; /* Трохи менші поля */
+    font-size: 0.95rem;
+}
+.profileModal textarea.loginInput {
+    resize: vertical; /* Дозволяємо змінювати розмір по висоті */
+}
+
+/* Кнопки внизу модалки */
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.modalButton {
+    border: none;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+.modalButton.primary {
+    background-color: #3f51b5;
+    color: white;
+}
+.modalButton.primary:hover {
+    background-color: #36469e;
+}
+.modalButton.secondary {
+    background-color: #f0f2f5;
+    color: #555;
+}
+.modalButton.secondary:hover {
+    background-color: #e4e6e9;
+}
+.modalButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* --- СТИЛІ ДЛЯ MANAGE CATEGORIES --- */
+
+.manageBackButton {
+    display: inline-block;
+    color: #555;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.manageBackButton:hover {
+    text-decoration: underline;
+}
+
+.manageCategoryList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.manageCategoryCard {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+}
+
+.manageCategoryInfo {
+    flex-grow: 1;
+    text-align: left;
+}
+.manageCategoryInfo h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+}
+.manageCategoryInfo p {
+    margin: 0 0 0.25rem 0;
+    color: #777;
+    font-size: 0.9rem;
+}
+.manageCategoryInfo span {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.manageCategoryActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* Адаптивність */
+@media (max-width: 600px) {
+    .manageCategoryCard {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .manageCategoryActions {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+        justify-content: space-between;
+    }
+}
+/* --- СТИЛІ ДЛЯ БЕЙДЖА КОШИКА --- */
+
+.cartIcon {
+    position: relative; /* Потрібно для позиціонування бейджа */
+    cursor: pointer; /* Можна додати onClick для відкриття кошика */
+}
+
+.cartCountBadge {
+    position: absolute;
+    top: -8px; /* Піднімаємо над іконкою */
+    right: -10px; /* Зсуваємо праворуч */
+    background-color: #f44336; /* Червоний колір */
+    color: white;
+    border-radius: 50%; /* Робимо круглим */
+    padding: 2px 6px; /* Внутрішні відступи */
+    font-size: 0.75rem; /* Маленький шрифт */
+    font-weight: bold;
+    line-height: 1; /* Висота рядка */
+    min-width: 18px; /* Мінімальна ширина */
+    text-align: center;
+    box-sizing: border-box;
+}
+/* --- СТИЛІ ДЛЯ МОДАЛЬНОГО ВІКНА КОШИКА --- */
+
+.cartModal {
+    max-width: 500px; /* Трохи ширше за профіль */
+}
+
+.emptyCartText {
+    text-align: center;
+    color: #777;
+    padding: 2rem 0;
+}
+
+.cartItemsList {
+    max-height: 40vh; /* Обмеження висоти списку */
+    overflow-y: auto; /* Додаємо прокрутку */
+    margin-bottom: 1.5rem;
+}
+
+.cartItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+.cartItem:last-child {
+    border-bottom: none;
+}
+
+.cartItemImage img {
+    border-radius: 8px;
+}
+
+.cartItemDetails {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.cartItemName {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.cartItemPrice {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.cartItemQuantity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.cartItemQuantity button {
+    background-color: #f0f2f5;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1.2rem;
+    line-height: 28px;
+    cursor: pointer;
+    color: #555;
+}
+.cartItemQuantity span {
+    font-weight: 500;
+    min-width: 20px;
+    text-align: center;
+}
+
+.cartItemRemove {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #aaa;
+    cursor: pointer;
+}
+.cartItemRemove:hover {
+    color: #f44336;
+}
+
+.cartFooter {
+    border-top: 1px solid #eee;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+}
+
+.cartTotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.checkoutButton {
+    width: 100%;
+}

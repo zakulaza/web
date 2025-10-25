@@ -1,48 +1,60 @@
-// app/login/page.js
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { signIn, useSession } from 'next-auth/react'; // Імпортуємо useSession
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const { data: session, status, update } = useSession(); // Отримуємо сесію та її статус + функцію update
 
+    // --- ОНОВЛЮЄМО ЛОГІН ЧЕРЕЗ EMAIL/ПАРОЛЬ ---
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
 
-        try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+        const result = await signIn('credentials', {
+            redirect: false, // НЕ перенаправляємо автоматично
+            email: email,
+            password: password,
+        });
 
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || 'Failed to login');
+        if (result.error) {
+            setError(result.error);
+        } else if (result.ok) {
+            // Вхід успішний, тепер треба визначити, куди перенаправити
+            // Оновлюємо сесію, щоб отримати дані користувача (включаючи роль)
+            const updatedSession = await update();
+            if (updatedSession?.user?.role === 'OWNER') {
+                router.push('/manage/restaurants'); // Власника - в адмінку
+            } else {
+                router.push('/menu'); // Клієнта - в меню
             }
-
-            router.push('/menu');
-
-        } catch (err) {
-            setError(err.message);
         }
     };
 
+    // --- ОНОВЛЮЄМО ЛОГІН ЧЕРЕЗ GOOGLE ---
+    const handleGoogleSignIn = () => {
+        // Ми не можемо дізнатися роль ДО перенаправлення на Google.
+        // Тому ми просимо Google повернути нас на спеціальну сторінку
+        // /auth/check-role, яка зробить перевірку ролі і фінальне перенаправлення.
+        signIn('google', { callbackUrl: '/auth/check-role' });
+    };
+
     return (
-        // ВИКОРИСТОВУЄМО НОВІ КЛАСИ-КОНТЕЙНЕРИ
         <main className="pageContainer loginPageContainer">
             <div className="loginContentWrapper">
-                <Link href="/menu" className="loginCloseBtn">×</Link>
+                {/* Кнопка закриття веде на лендінг */}
+                <Link href="/" className="loginCloseBtn">×</Link>
 
                 <h1 className="loginTitle">Вхід</h1>
 
                 <form onSubmit={handleLogin}>
+                    {/* ... (поля вводу email та пароля) ... */}
                     <div className="inputGroup">
                         <input
                             type="email"
@@ -71,7 +83,10 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                <button className="googleBtn">
+                <button
+                    className="googleBtn"
+                    onClick={handleGoogleSignIn}
+                >
                     <span className="googleIcon">G</span> Продовжити через Google
                 </button>
 

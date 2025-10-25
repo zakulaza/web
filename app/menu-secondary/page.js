@@ -1,3 +1,4 @@
+// app/menu-secondary/page.js
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -5,13 +6,19 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProfileModal from '../components/ProfileModal';
+import CartModal from '../components/CartModal'; // Імпортуємо модалку кошика
+import { useCart } from '../../context/CartContext'; // Імпортуємо хук кошика
 
 export default function MenuSecondaryPage() {
     const [dishes, setDishes] = useState([]);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false); // Стан для модалки кошика
 
     const searchParams = useSearchParams();
     const category = searchParams.get('category');
+
+    // Отримуємо функції та дані з контексту кошика
+    const { addToCart, cartCount } = useCart();
 
     // Завантажуємо дані з нашого API, коли сторінка відкривається
     useEffect(() => {
@@ -26,10 +33,15 @@ export default function MenuSecondaryPage() {
 
     return (
         <>
-            {/* Наша модалка, яка буде поверх всього */}
+            {/* Модалка Профілю */}
             <ProfileModal
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
+            />
+            {/* Модалка Кошика */}
+            <CartModal
+                isOpen={isCartOpen}
+                onClose={() => setIsCartOpen(false)}
             />
 
             {/* Контейнер сторінки, що заповнює екран */}
@@ -48,7 +60,11 @@ export default function MenuSecondaryPage() {
                             <p>description of the restaurant</p>
                         </div>
                         <div className="headerIcons">
-                            <span className="cartIcon">🛒</span>
+                            {/* Іконка кошика відкриває модалку */}
+                            <span className="cartIcon" onClick={() => setIsCartOpen(true)}>
+                🛒
+                                {cartCount > 0 && <span className="cartCountBadge">{cartCount}</span>}
+              </span>
                             <span className="profileIcon" onClick={() => setIsProfileOpen(true)}>
                 👤
               </span>
@@ -60,56 +76,27 @@ export default function MenuSecondaryPage() {
 
                         {/* Бічна навігація з випадаючим меню */}
                         <nav className="secondarySideNav">
-                            {/* --- КУХНЯ (з випадаючим меню) --- */}
+                            {/* --- КУХНЯ --- */}
                             <div className="sideNavItem with-dropdown">
                                 <span>Кухня</span>
                                 <ul className="dropdown-menu">
-                                    <li>
-                                        <Link href="/menu-secondary?category=Гарячі страви" className="sideNavItem-sub">
-                                            Гарячі страви
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/menu-secondary?category=Салати" className="sideNavItem-sub">
-                                            Салати
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/menu-secondary?category=Десерти" className="sideNavItem-sub">
-                                            Десерти
-                                        </Link>
-                                    </li>
+                                    <li><Link href="/menu-secondary?category=Гарячі страви" className="sideNavItem-sub">Гарячі страви</Link></li>
+                                    <li><Link href="/menu-secondary?category=Супи" className="sideNavItem-sub">Супи</Link></li>
+                                    <li><Link href="/menu-secondary?category=Салати" className="sideNavItem-sub">Салати</Link></li>
+                                    <li><Link href="/menu-secondary?category=Десерти" className="sideNavItem-sub">Десерти</Link></li>
                                 </ul>
                             </div>
-
-                            {/* --- НАПОЇ (з випадаючим меню) --- */}
+                            {/* --- НАПОЇ --- */}
                             <div className="sideNavItem with-dropdown">
                                 <span>Напої</span>
                                 <ul className="dropdown-menu">
-                                    <li>
-                                        <Link href="/menu-secondary?category=Алкогольні" className="sideNavItem-sub">
-                                            Алкогольні
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/menu-secondary?category=Безалкогольні" className="sideNavItem-sub">
-                                            Безалкогольні
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/menu-secondary?category=Кава" className="sideNavItem-sub">
-                                            Кава
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/menu-secondary?category=Чай" className="sideNavItem-sub">
-                                            Чай
-                                        </Link>
-                                    </li>
+                                    <li><Link href="/menu-secondary?category=Алкогольні напої" className="sideNavItem-sub">Алкогольні напої</Link></li>
+                                    <li><Link href="/menu-secondary?category=Безалкогольні напої" className="sideNavItem-sub">Безалкогольні напої</Link></li>
+                                    <li><Link href="/menu-secondary?category=Кава" className="sideNavItem-sub">Кава</Link></li>
+                                    <li><Link href="/menu-secondary?category=Чай" className="sideNavItem-sub">Чай</Link></li>
                                 </ul>
                             </div>
-
-                            {/* Просте посилання */}
+                            {/* --- ПІЦА --- */}
                             <Link href="/menu-secondary?category=Піца" className="sideNavItem">
                                 Піца
                             </Link>
@@ -121,14 +108,11 @@ export default function MenuSecondaryPage() {
                                 <h3>{category || 'Страви'}</h3>
                                 <div className="dishProgress">
                                     <span>lvl. 23</span>
-                                    <div className="dishProgressBar">
-                                        <div className="dishProgressBarFill" style={{ width: '83%' }}></div>
-                                    </div>
+                                    <div className="dishProgressBar"><div className="dishProgressBarFill" style={{ width: '83%' }}></div></div>
                                     <span>83%</span>
                                 </div>
                             </div>
 
-                            {/* Перевіряємо, чи 'dishes' є масивом, перед використанням .map */}
                             {Array.isArray(dishes) && dishes.map((dish) => (
                                 <div key={dish.id} className="dishItemNew">
                                     <div className="dishInfoNew">
@@ -136,7 +120,6 @@ export default function MenuSecondaryPage() {
                                         <p>{dish.description || 'Опис відсутній'}</p>
                                         <div className="dishDetailsNew">
                                             <span className="dishPriceNew">{dish.price} грн</span>
-                                            {/* <span className="dishOldPrice">134 грн</span> */}
                                         </div>
                                         <div className="dishCaloriesNew">
                                             <span className="caloriesBar red"></span>
@@ -145,13 +128,19 @@ export default function MenuSecondaryPage() {
                                     </div>
                                     <div className="dishImageContainerNew">
                                         <Image
-                                            src={dish.imageUrl || '/images/placeholder.jpg'} // Додаємо плейсхолдер
+                                            src={dish.imageUrl || '/images/placeholder.jpg'}
                                             alt={dish.name}
                                             width={90}
                                             height={90}
                                             className="dishImageNew"
                                         />
-                                        <button className="dishAddButtonNew">+</button>
+                                        {/* Кнопка додає товар в кошик при кліку */}
+                                        <button
+                                            className="dishAddButtonNew"
+                                            onClick={() => addToCart(dish)}
+                                        >
+                                            +
+                                        </button>
                                     </div>
                                 </div>
                             ))}
