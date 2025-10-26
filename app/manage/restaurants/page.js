@@ -5,88 +5,75 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import AddRestaurantModal from '../../components/AddRestaurantModal'; // Імпортуємо модалку
+import AddRestaurantModal from '../../components/AddRestaurantModal';
+import { User, Settings, Trash2, Plus } from 'lucide-react'; // Імпортуємо іконки
 
 export default function ManageRestaurantsPage() {
     const [restaurants, setRestaurants] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { data: session, status } = useSession();
-    const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модалки
 
-    // Завантажуємо ресторани власника
     useEffect(() => {
         if (status === 'authenticated') {
             fetch('/api/manage/restaurants')
                 .then((res) => {
-                    if (!res.ok) {
-                        throw new Error('Failed to fetch restaurants');
-                    }
+                    if (!res.ok) throw new Error('Failed to fetch restaurants');
                     return res.json();
                 })
-                .then((data) => {
-                    setRestaurants(data);
-                })
-                .catch((error) => {
-                    console.error('Error fetching restaurants:', error);
-                });
+                .then(setRestaurants)
+                .catch(console.error);
         }
     }, [status]);
 
-    // Функція для оновлення списку після додавання
     const handleRestaurantAdded = (newRestaurant) => {
-        setRestaurants((prevRestaurants) => [...prevRestaurants, newRestaurant]);
+        setRestaurants((prev) => [...prev, newRestaurant]);
     };
 
-    // Показуємо завантаження
     if (status === 'loading') {
         return <main className="pageContainer menuPageContainer"><div className="loadingText">Завантаження...</div></main>;
     }
-
-    // Доступ заборонено (хоча middleware мав би це обробити)
     if (status === 'unauthenticated') {
         return <main className="pageContainer menuPageContainer"><div className="loadingText">Доступ заборонено.</div></main>;
     }
 
     return (
         <>
-            {/* Модальне вікно для додавання */}
             <AddRestaurantModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onRestaurantAdded={handleRestaurantAdded}
             />
 
-            {/* Основний контент сторінки */}
             <main className="pageContainer menuPageContainer">
                 <div className="manageContentWrapper">
-                    {/* Хедер Адмін-панелі */}
                     <header className="manageHeader">
                         <div className="manageHeaderTitle">
                             <h1>MANAGER MODE</h1>
                         </div>
                         <div className="manageHeaderUser">
-                            <span className="profileIcon">👤</span>
-                            {/* Можна вивести email власника */}
-                            {/* <span>{session?.user?.email}</span> */}
+              <span className="profileIcon">
+                {session?.user?.image ? (
+                    <img src={session.user.image} alt="profile" className="headerProfileImage small" />
+                ) : (
+                    <User size={22} strokeWidth={2.5} /> // Заміна 👤
+                )}
+              </span>
+                            {/* Можна додати email <span>{session?.user?.email}</span> */}
                         </div>
                     </header>
 
-                    {/* Секція "My Restaurants" */}
                     <section className="manageSection">
                         <div className="manageSectionHeader">
                             <div>
                                 <h2>My Restaurants</h2>
                                 <p>Manage your restaurants and menus</p>
                             </div>
-                            {/* Кнопка відкриває модалку */}
-                            <button
-                                className="manageAddButton"
-                                onClick={() => setIsModalOpen(true)}
-                            >
-                                + Add Restaurant
+                            <button className="manageAddButton" onClick={() => setIsModalOpen(true)}>
+                                <Plus size={18} strokeWidth={3} style={{ marginRight: '0.5rem', verticalAlign: 'middle', marginTop: '-2px' }} /> {/* Іконка + */}
+                                Add Restaurant
                             </button>
                         </div>
 
-                        {/* Список ресторанів власника */}
                         <div className="manageRestaurantList">
                             {Array.isArray(restaurants) && restaurants.length > 0 ? (
                                 restaurants.map((restaurant) => (
@@ -109,8 +96,8 @@ export default function ManageRestaurantsPage() {
                                             </div>
                                         </div>
                                         <div className="manageRestaurantActions">
-                                            <span className="actionIcon">⚙️</span>
-                                            <span className="actionIcon">🗑️</span>
+                                            <button className="actionIcon"><Settings size={20} /></button> {/* Заміна ⚙️ */}
+                                            <button className="actionIcon"><Trash2 size={20} /></button> {/* Заміна 🗑️ */}
                                             <Link
                                                 href={`/manage/restaurants/${restaurant.id}/categories`}
                                                 className="manageMenuButton"

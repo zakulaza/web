@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Додаємо цей блок для зображень:
     images: {
         remotePatterns: [
             {
@@ -13,9 +12,12 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'images.unsplash.com', // Додаємо той, що ми використовували раніше
+                hostname: 'images.unsplash.com',
             },
-            // Додайте сюди будь-які інші домени, якщо знадобиться
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com', // Додано для фото профілів Google
+            },
         ],
     },
 };

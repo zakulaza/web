@@ -1,35 +1,27 @@
+// app/menu/page.js
 'use client';
 
-import { useState } from 'react';
-import { useSession } from 'next-auth/react'; // Для перевірки логіну
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import ProfileModal from '../components/ProfileModal';
+import { ArrowLeft, Settings, User } from 'lucide-react'; // Імпортуємо іконки
 
 export default function MenuPage() {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-    // Отримуємо 'status' сесії (loading, authenticated, unauthenticated)
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    // 1. Стан завантаження: показуємо завантажувач
+    // Стан завантаження або неавторизований (перевірка сесії)
     if (status === "loading") {
-        // Використовуємо класи-контейнери, щоб фон був правильним
-        return (
-            <main className="pageContainer menuPageContainer">
-                <div style={{ padding: '2rem', textAlign: 'center' }}>Завантаження...</div>
-            </main>
-        );
+        return <main className="pageContainer menuPageContainer"><div className="loadingText">Завантаження...</div></main>;
     }
-
-    // 2. Стан "не автентифікований": відправляємо на логін
     if (status === "unauthenticated") {
         router.push('/login');
-        return null; // Повертаємо null, поки йде перенаправлення
+        return null;
     }
 
-    // 3. Стан "автентифікований": показуємо сторінку
     return (
         <>
             <ProfileModal
@@ -37,62 +29,68 @@ export default function MenuPage() {
                 onClose={() => setIsProfileOpen(false)}
             />
 
+            {/* Контейнер сторінки */}
             <main className="pageContainer menuPageContainer">
-                {/* Обгортка, яка обмежує ширину */}
-                <div className="primaryMenuContentWrapper">
 
-                    <div className="menuHeaderImage">
-                        {/* Іконка профілю, яка відкриває модалку */}
-                        <div className="profileIcon" onClick={() => setIsProfileOpen(true)}>
-                            {/* Перевіряємо, чи є зображення з Google */}
-                            {session?.user?.image ? (
-                                <img
-                                    src={session.user.image}
-                                    alt={session.user.name || 'Profile'}
-                                    style={{
-                                        borderRadius: '50%',
-                                        width: '40px',
-                                        height: '40px',
-                                        objectFit: 'cover'
-                                    }}
-                                />
-                            ) : (
-                                '👤' // Заглушка, якщо зображення немає
-                            )}
-                        </div>
-                    </div>
+                {/* Обгортка контенту */}
+                <div className="primaryMenuContentWrapper updatedDesign">
 
-                    {/* Картка профілю ресторану */}
-                    <div className="menuProfileCard">
-                        <div className="menuProfileAvatar"></div>
-                        <div className="menuProfileInfo">
-                            {/* Можна показати ім'я користувача або назву ресторану */}
-                            <h2>{session?.user?.name || 'NAZVA'}</h2>
-                            <p>★★★★☆</p>
-                            <span>Буковель, 32</span>
-                        </div>
-                        <div className="menuProfileLevel">
-                            <div className="menuProgressBarContainer">
-                                <div className="menuProgressBarFill" style={{ width: '75%' }}></div>
+                    {/* Хедер з фоновим зображенням та іконками */}
+                    <div className="menuHeaderImage updatedHeader">
+                        {/* Іконки у хедері */}
+                        <div className="headerIconsOverlay">
+                            <button onClick={() => router.back()} className="headerIconBtn backBtn">
+                                <ArrowLeft size={20} strokeWidth={2.5} /> {/* Заміна ← */}
+                            </button>
+                            <div className="headerIconsRight">
+                                <button className="headerIconBtn settingsBtn">
+                                    <Settings size={20} strokeWidth={2.5} /> {/* Заміна ⚙️ */}
+                                </button>
+                                <button className="headerIconBtn profileBtn" onClick={() => setIsProfileOpen(true)}>
+                                    {session?.user?.image ? (
+                                        <img src={session.user.image} alt="profile" />
+                                    ) : (
+                                        <User size={20} strokeWidth={2.5} /> // Заміна 👤
+                                    )}
+                                </button>
                             </div>
-                            <span>lvl. 23</span>
                         </div>
                     </div>
 
-                    {/* Навігація по категоріях */}
-                    <nav className="menuNavList">
-                        {/* Виправлене посилання для "Кухні" */}
-                        <Link href="/menu-secondary?category=Гарячі страви" className="menuNavItem">
+                    {/* Оновлена картка профілю */}
+                    <div className="menuProfileCard updatedCard">
+                        <div className="cardTopRow">
+                            <div className="cardAvatar"></div>
+                            <div className="cardInfo">
+                                {/* Ім'я користувача або назва */}
+                                <h2>{session?.user?.name || 'NAZVA'}</h2>
+                                <p className="cardRating">★★★★☆</p>
+                                <span className="cardAddress">Rynok square, 39</span>
+                            </div>
+                            <div className="cardLevel">
+                                {/* TODO: Отримувати level з сесії */}
+                                <span>lvl. 23</span>
+                            </div>
+                        </div>
+                        <div className="cardProgressBarContainer">
+                            {/* TODO: Отримувати progress з сесії */}
+                            <div className="cardProgressBarFill" style={{ width: '40%' }}></div>
+                        </div>
+                    </div>
+
+                    {/* Оновлений список меню */}
+                    <nav className="menuNavList updatedList">
+                        <Link href="/menu-secondary?category=Гарячі страви" className="menuNavItem updatedItem">
                             Кухня
                         </Link>
-                        <Link href="/menu-secondary?category=Напої" className="menuNavItem">
+                        <Link href="/menu-secondary?category=Напої" className="menuNavItem updatedItem">
                             Напої
                         </Link>
-                        <Link href="/menu-secondary?category=Алкоголь" className="menuNavItem">
+                        <Link href="/menu-secondary?category=Алкогольні напої" className="menuNavItem updatedItem">
                             Алкоголь
                         </Link>
-                        <Link href="/menu-secondary?category=Mapu" className="menuNavItem">
-                            Mapu
+                        <Link href="/menu-secondary?category=Мерч" className="menuNavItem updatedItem">
+                            Мерч
                         </Link>
                     </nav>
                 </div>

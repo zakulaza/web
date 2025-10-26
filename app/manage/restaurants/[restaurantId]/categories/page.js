@@ -3,47 +3,41 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useParams, useRouter } from 'next/navigation'; // Для отримання ID з URL
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import AddCategoryModal from '../../../../components/AddCategoryModal'; // Імпортуємо модалку
+import AddCategoryModal from '../../../../components/AddCategoryModal';
+import { ChevronLeft, Plus, Settings, Trash2, User } from 'lucide-react'; // Переконайтесь, що User тут є
 
 export default function ManageCategoriesPage() {
     const [categories, setCategories] = useState([]);
-    const [restaurantName, setRestaurantName] = useState(''); // Щоб показати назву ресторану
+    const [restaurantName, setRestaurantName] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { data: session, status } = useSession();
-    const params = useParams(); // Отримуємо параметри з URL ({ restaurantId: '...' })
-    const router = useRouter(); // Для кнопки "Назад"
+    const params = useParams();
+    const router = useRouter();
     const restaurantId = params.restaurantId;
 
-    // Завантажуємо категорії для цього restaurantId
     useEffect(() => {
         if (status === 'authenticated' && restaurantId) {
             const apiUrl = `/api/manage/restaurants/${restaurantId}/categories`;
             fetch(apiUrl)
                 .then((res) => {
                     if (!res.ok) {
-                        // Можливо, ресторан не знайдено або немає доступу
                         if (res.status === 404 || res.status === 401) {
-                            router.push('/manage/restaurants'); // Повертаємо на список ресторанів
+                            router.push('/manage/restaurants');
                         }
                         throw new Error('Failed to fetch categories');
                     }
                     return res.json();
                 })
-                .then((data) => {
-                    setCategories(data);
-                    // TODO: Отримати назву ресторану окремим запитом або передати її
-                    // setRestaurantName(data.restaurant.name); // Поки що закоментовано
-                })
-                .catch((error) => {
-                    console.error('Error fetching categories:', error);
-                });
+                .then(setCategories)
+                .catch(console.error);
+            // TODO: Fetch restaurant details to get the name
         }
     }, [status, restaurantId, router]);
 
     const handleCategoryAdded = (newCategory) => {
-        setCategories((prevCategories) => [...prevCategories, newCategory]);
+        setCategories((prev) => [...prev, newCategory]);
     };
 
     if (status === 'loading') {
@@ -59,35 +53,41 @@ export default function ManageCategoriesPage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onCategoryAdded={handleCategoryAdded}
-                restaurantId={restaurantId} // Передаємо ID ресторану в модалку
+                restaurantId={restaurantId}
             />
 
             <main className="pageContainer menuPageContainer">
                 <div className="manageContentWrapper">
                     <header className="manageHeader">
-                        {/* ... (хедер адмінки) ... */}
+                        <div className="manageHeaderTitle"><h1>MANAGER MODE</h1></div>
+                        <div className="manageHeaderUser">
+              <span className="profileIcon">
+                 {/* Тепер іконка User буде відображатися */}
+                  {session?.user?.image ? (
+                      <img src={session.user.image} alt="profile" className="headerProfileImage small" />
+                  ) : (
+                      <User size={22} strokeWidth={2.5} />
+                  )}
+               </span>
+                        </div>
                     </header>
 
                     <section className="manageSection">
                         <div className="manageSectionHeader">
                             <div>
-                                {/* Кнопка "Назад" */}
                                 <Link href="/manage/restaurants" className="manageBackButton">
-                                    ← Manage Restaurants
+                                    <ChevronLeft size={16} style={{ display:'inline-block', marginRight: '0.25rem', verticalAlign: 'middle', marginTop: '-2px'}}/>
+                                    Manage Restaurants
                                 </Link>
-                                {/* Назва ресторану (поки статична) */}
                                 <h2>Manage Categories for {restaurantName || `Restaurant #${restaurantId}`}</h2>
                                 <p>Add, edit, or delete categories for this menu</p>
                             </div>
-                            <button
-                                className="manageAddButton"
-                                onClick={() => setIsModalOpen(true)}
-                            >
-                                + Add Category
+                            <button className="manageAddButton" onClick={() => setIsModalOpen(true)}>
+                                <Plus size={18} strokeWidth={3} style={{ marginRight: '0.5rem', verticalAlign: 'middle', marginTop: '-2px' }} />
+                                Add Category
                             </button>
                         </div>
 
-                        {/* Список категорій */}
                         <div className="manageCategoryList">
                             {Array.isArray(categories) && categories.length > 0 ? (
                                 categories.map((category) => (
@@ -98,15 +98,14 @@ export default function ManageCategoriesPage() {
                                             <span>{/* TODO: Кількість страв */} items</span>
                                         </div>
                                         <div className="manageCategoryActions">
-                                            {/* Посилання на керування стравами цієї категорії */}
                                             <Link
                                                 href={`/manage/restaurants/${restaurantId}/categories/${category.id}/items`}
-                                                className="manageMenuButton" // Використовуємо той самий стиль
+                                                className="manageMenuButton"
                                             >
                                                 Manage Items
                                             </Link>
-                                            <span className="actionIcon">⚙️</span>
-                                            <span className="actionIcon">🗑️</span>
+                                            <button className="actionIcon"><Settings size={20} /></button>
+                                            <button className="actionIcon"><Trash2 size={20} /></button>
                                         </div>
                                     </div>
                                 ))

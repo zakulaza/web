@@ -6,21 +6,22 @@ import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import ProfileModal from '../components/ProfileModal';
-import CartModal from '../components/CartModal'; // Імпортуємо модалку кошика
-import { useCart } from '../../context/CartContext'; // Імпортуємо хук кошика
+import CartModal from '../components/CartModal';
+import { useCart } from '../../context/CartContext';
+import { useSession } from 'next-auth/react'; // Потрібен для зображення профілю
+import { ArrowLeft, ShoppingCart, User } from 'lucide-react'; // Імпортуємо іконки
 
 export default function MenuSecondaryPage() {
     const [dishes, setDishes] = useState([]);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const [isCartOpen, setIsCartOpen] = useState(false); // Стан для модалки кошика
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     const searchParams = useSearchParams();
     const category = searchParams.get('category');
 
-    // Отримуємо функції та дані з контексту кошика
     const { addToCart, cartCount } = useCart();
+    const { data: session } = useSession(); // Отримуємо сесію для іконки профілю
 
-    // Завантажуємо дані з нашого API, коли сторінка відкривається
     useEffect(() => {
         if (category) {
             fetch(`/api/dishes?category=${category}`)
@@ -29,52 +30,45 @@ export default function MenuSecondaryPage() {
                     setDishes(data);
                 });
         }
-    }, [category]); // Ефект спрацює, якщо категорія зміниться
+    }, [category]);
 
     return (
         <>
-            {/* Модалка Профілю */}
             <ProfileModal
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
             />
-            {/* Модалка Кошика */}
             <CartModal
                 isOpen={isCartOpen}
                 onClose={() => setIsCartOpen(false)}
             />
 
-            {/* Контейнер сторінки, що заповнює екран */}
             <main className="pageContainer menuPageContainer">
-
-                {/* Обгортка, яка заповнює висоту і обмежує ширину контенту */}
                 <div className="secondaryMenuContentWrapper">
-
-                    {/* Хедер з кнопкою "Назад" та іконками */}
                     <header className="secondaryMenuHeaderNew">
                         <Link href="/menu" className="backButton">
-                            ‹
+                            <ArrowLeft size={24} strokeWidth={2.5} /> {/* Заміна ← */}
                         </Link>
                         <div className="restaurantInfo">
                             <h3>NAZVA</h3>
                             <p>description of the restaurant</p>
                         </div>
                         <div className="headerIcons">
-                            {/* Іконка кошика відкриває модалку */}
-                            <span className="cartIcon" onClick={() => setIsCartOpen(true)}>
-                🛒
-                                {cartCount > 0 && <span className="cartCountBadge">{cartCount}</span>}
+              <span className="cartIcon" onClick={() => setIsCartOpen(true)}>
+                <ShoppingCart size={22} strokeWidth={2.5} /> {/* Заміна 🛒 */}
+                  {cartCount > 0 && <span className="cartCountBadge">{cartCount}</span>}
               </span>
                             <span className="profileIcon" onClick={() => setIsProfileOpen(true)}>
-                👤
+                 {session?.user?.image ? (
+                     <img src={session.user.image} alt="profile" className="headerProfileImage" />
+                 ) : (
+                     <User size={22} strokeWidth={2.5} /> // Заміна 👤
+                 )}
               </span>
                         </div>
                     </header>
 
-                    {/* Тіло меню (бічна панель + список) */}
                     <div className="secondaryMenuBody">
-
-                        {/* Бічна навігація з випадаючим меню */}
                         <nav className="secondarySideNav">
                             {/* --- КУХНЯ --- */}
                             <div className="sideNavItem with-dropdown">
@@ -102,11 +96,11 @@ export default function MenuSecondaryPage() {
                             </Link>
                         </nav>
 
-                        {/* Оновлений список страв */}
                         <div className="dishListNew">
                             <div className="dishListHeader">
                                 <h3>{category || 'Страви'}</h3>
                                 <div className="dishProgress">
+                                    {/* TODO: Отримувати level/progress */}
                                     <span>lvl. 23</span>
                                     <div className="dishProgressBar"><div className="dishProgressBarFill" style={{ width: '83%' }}></div></div>
                                     <span>83%</span>
@@ -134,7 +128,6 @@ export default function MenuSecondaryPage() {
                                             height={90}
                                             className="dishImageNew"
                                         />
-                                        {/* Кнопка додає товар в кошик при кліку */}
                                         <button
                                             className="dishAddButtonNew"
                                             onClick={() => addToCart(dish)}
@@ -145,7 +138,6 @@ export default function MenuSecondaryPage() {
                                 </div>
                             ))}
                         </div>
-
                     </div>
                 </div>
             </main>

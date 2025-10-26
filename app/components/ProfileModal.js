@@ -1,60 +1,92 @@
 // app/components/ProfileModal.js
 'use client';
 
-import { signOut } from 'next-auth/react'; // Імпортуємо функцію виходу
+import { signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { MapPin, Award, Coffee, Map, X } from 'lucide-react'; // Імпортуємо іконки
 
 export default function ProfileModal({ isOpen, onClose }) {
-    // Якщо модальне вікно не відкрите, нічого не рендеримо
+    const { data: session } = useSession();
+
     if (!isOpen) {
         return null;
     }
 
-    // Функція для обробки виходу
     const handleSignOut = () => {
-        signOut({ callbackUrl: '/login' }); // Викликаємо signOut і вказуємо, куди перенаправити після виходу
+        signOut({ callbackUrl: '/login' });
     };
 
     return (
-        // Оверлей (темний фон), який закриває модалку при кліку
         <div className="profileOverlay" onClick={onClose}>
-            {/* Саме модальне вікно, клік по якому не закриває його */}
-            <div className="profileModal" onClick={(e) => e.stopPropagation()}>
-                {/* Кнопка закриття (хрестик) */}
-                <button className="profileCloseButton" onClick={onClose}>×</button>
+            <div className="profileModal updatedProfileModal" onClick={(e) => e.stopPropagation()}>
+                <button className="profileCloseButton" onClick={onClose}>
+                    <X size={24} /> {/* Заміна × */}
+                </button>
 
-                {/* Заголовок профілю (аватар, ім'я) */}
-                <div className="profileHeader">
-                    <div className="profileAvatar">P</div> {/* Можна замінити на Image з сесії */}
-                    <div className="profileInfo">
-                        <h2>NAZVA</h2> {/* Можна замінити на ім'я з сесії */}
-                        <p>Profile</p>
+                <div className="updatedProfileHeader">
+                    <div className="updatedProfileAvatar">
+                        {session?.user?.image ? (
+                            <Image src={session.user.image} alt="Avatar" width={50} height={50} style={{ borderRadius: '50%' }}/>
+                        ) : (
+                            <span>{session?.user?.name?.charAt(0) || session?.user?.email?.charAt(0) || 'A'}</span>
+                        )}
+                    </div>
+                    <div className="updatedProfileName">
+                        <h3>{session?.user?.name || 'User'}</h3>
+                        <p>{session?.user?.email}</p>
+                    </div>
+                    <div className="updatedProfileLevel">
+                        {/* TODO: Отримувати level з сесії */}
+                        <span>{1} lvl.</span>
                     </div>
                 </div>
 
-                {/* Картка зі статистикою */}
-                <div className="profileStatsCard">
-                    <p>Restaurants: 2 selected</p>
-                    <p>Achievements: 2</p>
-                </div>
+                {/* Обгортка для контенту з прокруткою */}
+                <div className="profileModalContent">
+                    <div className="updatedProfileStats">
+                        <div className="statCard">
+                            <span className="statIcon"><MapPin size={22} /></span> {/* Заміна 📍 */}
+                            <h4>Restaurants</h4>
+                            <p><strong>2</strong> visited</p> {/* TODO: Динамічні дані */}
+                            <span>Lviv, Kyiv</span>
+                        </div>
+                        <div className="statCard">
+                            <span className="statIcon"><Award size={22} /></span> {/* Заміна 🏆 */}
+                            <h4>Achievements</h4>
+                            {/* TODO: Динамічні дані */}
+                            <p><strong>{2}</strong> unlocked</p>
+                        </div>
+                    </div>
 
-                {/* Кнопка "Мої речі" */}
-                <button className="profileMyItemsButton">My Items</button>
+                    <button className="updatedMyItemsButton">My Items</button>
 
-                {/* Кнопка "Вийти" */}
+                    <div className="updatedAchievementsList">
+                        <h4>Achievements</h4>
+                        <div className="achievementItem">
+                            <span className="achievementIcon"><Coffee size={24} /></span> {/* Заміна ☕️ */}
+                            <div>
+                                <h5>Coffee Lover</h5>
+                                <p>Tried 10 different coffee items</p>
+                            </div>
+                        </div>
+                        <div className="achievementItem">
+                            <span className="achievementIcon"><Map size={24} /></span> {/* Заміна 🗺️ */}
+                            <div>
+                                <h5>Explorer</h5>
+                                <p>Visited 5 different restaurants</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> {/* Кінець profileModalContent */}
+
+                {/* Кнопка "Вийти" тепер поза блоком прокрутки */}
                 <button
-                    onClick={handleSignOut} // Прив'язуємо функцію виходу
-                    className="modalButton secondary" // Використовуємо стиль вторинної кнопки
-                    style={{ width: '100%', marginTop: '0.5rem' }} // Додаткові стилі для розміщення
+                    onClick={handleSignOut}
+                    className="modalButton secondary"
+                    // Стилі для розміщення внизу, застосовуються через CSS
                 >
                     Вийти
                 </button>
-
-                {/* Секція досягнень */}
-                <div className="profileAchievements">
-                    <h3>Achievements</h3>
-                    <p>CoffeeLover</p>
-                    <p>Explorer</p>
-                </div>
             </div>
         </div>
     );
