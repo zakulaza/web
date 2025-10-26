@@ -38,44 +38,55 @@ export default function SignupPage() {
     };
 
     return (
-        <main className="loginScreen">
-            <h1 className="loginTitle">Реєстрація</h1>
+        // 1. Використовуємо класи для центрування (як на сторінці /login)
+        <main className="pageContainer loginPageContainer">
 
-            <form onSubmit={handleSubmit}>
-                <div className="inputGroup">
-                    <label htmlFor="email">E-mail</label>
-                    <input
-                        type="email"
-                        id="email"
-                        className="loginInput"
-                        placeholder="Введіть e-mail"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+            {/* 2. Використовуємо обгортку для обмеження ширини, тіні та білого фону */}
+            <div className="loginContentWrapper">
+
+                {/* Кнопка закриття (додамо, як на /login) */}
+                <Link href="/" className="loginCloseBtn">×</Link>
+
+                <h1 className="loginTitle">Реєстрація</h1>
+
+                <form onSubmit={handleSubmit}>
+
+                    <div className="inputGroup">
+                        <label htmlFor="email">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            className="loginInput"
+                            placeholder="Введіть e-mail"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="inputGroup">
+                        <label htmlFor="password">Пароль</label>
+                        <input
+                            type="password"
+                            id="password"
+                            className="loginInput"
+                            placeholder="Введіть пароль"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {error && <p className="loginError">{error}</p>}
+
+                    <button type="submit" className="loginSubmitBtn">
+                        Зареєструватись
+                    </button>
+                </form>
+
+                <div className="loginLinks">
+                    <Link href="/login" className="loginLink">Вже зареєстрований?</Link>
                 </div>
-                <div className="inputGroup">
-                    <label htmlFor="password">Пароль</label>
-                    <input
-                        type="password"
-                        id="password"
-                        className="loginInput"
-                        placeholder="Введіть пароль"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
 
-                {error && <p className="loginError">{error}</p>}
-
-                <button type="submit" className="loginSubmitBtn">
-                    Зареєструватись
-                </button>
-            </form>
-
-            <div className="loginLinks">
-                <Link href="/login" className="loginLink">Вже зареєстрований?</Link>
             </div>
         </main>
     );

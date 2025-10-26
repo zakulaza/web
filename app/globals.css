@@ -1,22 +1,30 @@
+/* ==================================================================== */
+/* === GLOBALS.CSS - ФІНАЛЬНА ВЕРСІЯ (КОРИГОВАНІ РОЗМІРИ) === */
+/* ==================================================================== */
+
 /* === БАЗОВІ СТИЛІ ТА МАСШТАБУВАННЯ === */
 :root {
     /* Базовий розмір шрифту: мін 14px, бажаний ~1vw, макс 16px */
     font-size: clamp(0.875rem, 1vw + 0.1rem, 1rem);
-    --container-max-width: 12000px; /* Макс. ширина контенту на великих екранах */
-    --content-padding: clamp(1rem, 4vw, 2.5rem); /* Адаптивний боковий відступ */
-    --vertical-padding: clamp(1.5rem, 4vh, 2rem); /* Адаптивний вертикальний відступ */
+    --container-max-width: 1280px;
+    --content-padding: clamp(1rem, 4vw, 2.5rem);
+    --vertical-padding: clamp(1.5rem, 4vh, 2rem);
+
+    /* --- ЗМІННІ ДЛЯ КОНТРОЛЮ ШИРИНИ МЕНЮ (ЗНАЧНЕ ЗБІЛЬШЕННЯ) --- */
+    --card-max-width: 1600px; /* Картка профілю (Збільшена ширина) */
+    --nav-max-width: 1200px; /* Кнопки категорій (Вужчі, але збільшені) */
 }
 
 html {
     box-sizing: border-box;
-    scroll-behavior: smooth; /* Плавна прокрутка */
+    scroll-behavior: smooth;
 }
 *, *:before, *:after {
     box-sizing: inherit;
 }
 
 body {
-    background-color: #f0f2f5; /* Сірий фон за замовчуванням */
+    background-color: #f0f2f5;
     color: #333;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
@@ -42,7 +50,7 @@ body {
 }
 
 .menuPageContainer {
-    background-color: #fff; /* Меню завжди на білому фоні */
+    background-color: #fff;
     justify-content: flex-start;
 }
 
@@ -68,8 +76,8 @@ body {
 }
 
 .primaryMenuContentWrapper {
-    max-width: 600px;
-    padding: 0;
+    max-width: var(--card-max-width); /* Використовуємо велику ширину */
+    padding: 0; /* ВИДАЛЕНО ВНУТРІШНІЙ PADDING */
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -107,17 +115,62 @@ body {
 
 /* === СТИЛІ MENU PRIMARY (адаптивні) === */
 .primaryMenuContentWrapper.updatedDesign { /* Залишаємо для специфічності */ }
-.menuHeaderImage.updatedHeader { width: 100%; height: clamp(200px, 30vh, 250px); background-color: #f0f0f0; background-image: url('https://images.unsplash.com/photo-1559396229-c7d6c636f33d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fHJlc3RhdXJhbnQlMjBhd25pbmd8ZW58MHx8fHwxNjY2MzM2ODIz&ixlib-rb-1.2.1&q=80&w=600'); background-size: cover; background-position: center; position: relative; flex-shrink: 0; }
-.headerIconsOverlay { position: absolute; inset: 0 0 auto 0; padding: clamp(1rem, 3vw, 1.5rem); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0)); }
+
+/* ВИПРАВЛЕНО: Прибираємо фонове зображення та margin, щоб керувати ними в JSX */
+.menuHeaderImage.updatedHeader {
+    width: 100%;
+    height: clamp(200px, 30vh, 250px);
+    background-color: #f0f0f0;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.headerIconsOverlay {
+    position: absolute;
+    inset: 0 0 auto 0;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0));
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    box-sizing: border-box;
+}
 .headerIconBtn { background-color: rgba(255, 255, 255, 0.8); color: #333; border: none; border-radius: 50%; width: clamp(35px, 6vw, 40px); height: clamp(35px, 6vw, 40px); display: flex; align-items: center; justify-content: center; font-size: clamp(1.1rem, 2.5vw, 1.3rem); cursor: pointer; transition: background-color 0.2s; backdrop-filter: blur(5px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .headerIconBtn:hover { background-color: rgba(255, 255, 255, 0.95); }
 .headerIconBtn.backBtn { font-weight: bold; }
 .headerIconsRight { display: flex; gap: 0.75rem; }
 .headerIconBtn.profileBtn img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 
-.menuProfileCard.updatedCard { background-color: white; border-radius: clamp(1rem, 2vw, 1.25rem); box-shadow: 0 8px 25px rgba(0,0,0,0.1); padding: clamp(1rem, 3vw, 1.5rem); margin: clamp(-60px, -10vh, -80px) clamp(1rem, 4vw, 1.5rem) clamp(1.5rem, 4vh, 2rem); position: relative; z-index: 5; text-align: left; flex-shrink: 0; }
+/* ВИПРАВЛЕНО: Видаляємо складний адаптивний margin, щоб керувати ним у JSX */
+.menuProfileCard.updatedCard {
+    background-color: white;
+    border-radius: clamp(1rem, 2vw, 1.25rem);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    position: relative;
+    z-index: 5;
+    text-align: left;
+    flex-shrink: 0;
+}
 .cardTopRow { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-.cardAvatar { width: clamp(50px, 12vw, 60px); height: clamp(50px, 12vw, 60px); border-radius: 50%; background-color: #e0e0e0; border: 3px solid white; flex-shrink: 0; }
+/* ВИПРАВЛЕНО: ПОВЕРТАЄМО АВАТАРКУ, ЩОБ ВОНА ЗНАХОДИЛАСЯ ЗЛІВА */
+.cardAvatar {
+    width: clamp(50px, 12vw, 60px);
+    height: clamp(50px, 12vw, 60px);
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    border: 3px solid white;
+    flex-shrink: 0;
+    display: flex; /* Повертаємо відображення */
+    align-items: center;
+    justify-content: center;
+}
+
 .cardInfo { flex-grow: 1; overflow: hidden; }
 .cardInfo h2 { margin: 0; font-size: clamp(1.2rem, 3.5vw, 1.4rem); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
 .cardInfo .cardRating { margin: 0.1rem 0 0.2rem; color: #FFC107; font-size: 0.9rem;}
@@ -126,12 +179,41 @@ body {
 .cardProgressBarContainer { width: 100%; background-color: #e9ecef; border-radius: 50px; height: 10px; overflow: hidden; }
 .cardProgressBarFill { height: 100%; background-color: #28a745; border-radius: 50px; }
 
-.menuNavList.updatedList { display: flex; flex-direction: column; padding: 0 clamp(1rem, 4vw, 1.5rem) clamp(1.5rem, 4vh, 2rem); text-align: left; gap: clamp(0.75rem, 2vw, 1rem); margin: 0; flex-grow: 1; overflow-y: auto; }
-.menuNavItem.updatedItem { text-decoration: none; color: #333; font-size: clamp(1rem, 2.5vw, 1.1rem); font-weight: 500; padding: clamp(1rem, 3vw, 1.25rem) 1.5rem; border: none; background-color: #f8f9fa; border-radius: 50px; transition: background-color 0.2s, transform 0.1s; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; }
-.menuNavItem.updatedItem:hover { background-color: #e9ecef; }
-.menuNavItem.updatedItem:active { transform: scale(0.98); }
+/* --- СТИЛІ КАТЕГОРІЙ --- */
+.menuNavList.updatedList {
+    max-width: var(--nav-max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* ВИПРАВЛЕНО: ПОВЕРТАЄМО ПРАВИЛЬНИЙ PADDING, ЩОБ КНОПКИ БУЛИ ВИСОКИМИ */
+    padding: 0 clamp(1rem, 4vw, 1.5rem) clamp(1.5rem, 4vh, 2rem);
+    text-align: left;
+    flex-grow: 1;
+    overflow-y: auto;
+    justify-content: center;
+    /* ЗБІЛЬШУЄМО Z-INDEX, ЩОБ КНОПКИ БУЛИ КЛІКАБЕЛЬНИМИ */
+    position: relative;
+    z-index: 10;
+}
 
-/* === СТИЛІ MENU SECONDARY (адаптивні) === */
+.menuNavItem.updatedItem {
+    /* СУТТЄВЕ ЗМЕНШЕННЯ ТА КОРИГУВАННЯ РОЗМІРУ КНОПОК */
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 1.2rem 1.5rem; /* ЗМЕНШЕНО PADDING ДЛЯ ПОВЕРНЕННЯ НОРМАЛЬНОЇ ВИСОТИ */
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-weight: 700;
+    background-color: #f8f9fa;
+    color: #333;
+    flex-shrink: 0;
+}
+
+/* === СТИЛІ MENU SECONDARY (адаптивні) --- */
 .secondaryMenuHeaderNew { display: flex; align-items: center; gap: clamp(1rem, 3vw, 1.5rem); padding: clamp(1rem, 3vh, 1.5rem) var(--content-padding); border-bottom: 1px solid #f0f0f0; flex-shrink: 0; width: 100%; max-width: var(--container-max-width); margin: 0 auto; }
 .backButton { font-size: clamp(1.5rem, 4vw, 2rem); text-decoration: none; color: #333; font-weight: bold; }
 .restaurantInfo { text-align: left; flex-grow: 1; overflow: hidden;}
@@ -190,7 +272,7 @@ body {
 .updatedProfileAvatar { width: clamp(40px, 8vw, 50px); height: clamp(40px, 8vw, 50px); border-radius: 50%; background-color: rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; font-size: clamp(1.5rem, 3vw, 1.8rem); font-weight: 500; flex-shrink: 0; }
 .updatedProfileAvatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .updatedProfileName { flex-grow: 1; overflow: hidden; }
-.updatedProfileName h3 { margin: 0; font-size: clamp(1rem, 2.2vw, 1.1rem); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.updatedProfileName h3 { margin: 0; font-size: clamp(1rem, 2.2vw, 1.1rem); font-weight: 600; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
 .updatedProfileName p { margin: 0; font-size: 0.8rem; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .updatedProfileLevel { font-size: 0.9rem; font-weight: 500; background-color: rgba(0, 0, 0, 0.2); padding: 0.2rem 0.6rem; border-radius: 50px; flex-shrink: 0; white-space: nowrap;}
 /* --- Контент модалки профілю (з прокруткою) --- */
@@ -213,7 +295,7 @@ body {
 /* --- Кнопка "Вийти" (розміщення внизу) --- */
 .profileModal .modalButton.secondary { margin: 1.5rem 0 0; width: 100%; flex-shrink: 0; } /* Змінив позицію кнопки "Вийти" */
 
-/* === СТИЛІ ЛЕНДІНГУ (адаптивні) === */
+/* === СТИЛІ ЛЕНДІНГУ (адаптивні) --- */
 .landingContentWrapper { max-width: 1100px; margin: 0 auto; padding: 0 var(--content-padding); }
 .landingHeader { display: flex; justify-content: space-between; align-items: center; padding: clamp(1.5rem, 4vh, 2rem) 0; }
 .landingLogo { font-weight: bold; font-size: clamp(1.2rem, 3vw, 1.5rem); color: #000; }
@@ -247,7 +329,7 @@ body {
 .footerLinks strong { color: #333; display: block; margin-bottom: 0.5rem; font-size: 0.9rem;}
 .footerLinks p { margin: 0; font-size: 0.9rem;}
 
-/* === СТИЛІ MANAGER MODE (адаптивні) === */
+/* === СТИЛІ MANAGER MODE (адаптивні) --- */
 .manageContentWrapper { max-width: 1200px; margin: 0 auto; padding: var(--vertical-padding) var(--content-padding); }
 .manageHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; flex-wrap: wrap; gap: 1rem;}
 .manageHeaderTitle h1 { margin: 0; font-size: 1.2rem; letter-spacing: 1px; color: #555; }
@@ -297,7 +379,7 @@ body {
 .manageBackButton:hover { text-decoration: underline; }
 .manageCategoryList { display: flex; flex-direction: column; gap: clamp(0.5rem, 2vh, 1rem); }
 .manageCategoryCard { background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column; align-items: stretch; justify-content: space-between; padding: clamp(0.8rem, 2vw, 1rem) clamp(1rem, 3vw, 1.5rem); gap: 1rem; }
-@media (min-width: 600px) { .manageCategoryCard { flex-direction: row; align-items: center; } }
+@media (min-width: 600px) { .manageRestaurantCard { flex-direction: row; align-items: center; } }
 .manageCategoryInfo { flex-grow: 1; text-align: left; overflow: hidden;} /* Додав overflow */
 .manageCategoryInfo h3 { margin: 0 0 0.25rem 0; font-size: 1.1rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;} /* Додав обрізання тексту */
 .manageCategoryInfo p { margin: 0 0 0.25rem 0; color: #777; font-size: 0.9rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;} /* Додав обрізання тексту */
@@ -305,7 +387,7 @@ body {
 .manageCategoryActions { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; justify-content: space-between; }
 @media (min-width: 600px) { .manageCategoryActions { margin-top: 0; padding-top: 0; border-top: none; justify-content: flex-start; } }
 
-/* === СТИЛІ КОШИКА (адаптивні) === */
+/* === СТИЛІ КОШИКА (адаптивні) --- */
 .cartIcon { position: relative; cursor: pointer; }
 .cartCountBadge { position: absolute; top: -8px; right: -10px; background-color: #f44336; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; line-height: 1; min-width: 18px; text-align: center; box-sizing: border-box; }
 .cartModal { max-width: 500px; }
@@ -358,7 +440,7 @@ body {
     stroke: #f44336;
 }
 
-/* --- ПРОКРУТКА В МОДАЛЬНИХ ВІКНАХ --- */
+/* --- ПРОКРУТКА В МОДАЛЬНИХ ВІКОН --- */
 .profileModalContent, .cartModalContent {
     padding: clamp(1rem, 4vw, 1.5rem);
     overflow-y: auto; /* Додаємо прокрутку */
@@ -380,10 +462,10 @@ body {
     margin: 0; /* Прибираємо старий margin */
     width: 100%;
 }
-.profileModal .profileModalContent + .modalButton.secondary {
+.profileModal .modalButton.secondary:not(.no-fix) {
     margin: 1.5rem clamp(1rem, 4vw, 1.5rem) clamp(1rem, 4vw, 1.5rem);
     width: calc(100% - 2 * clamp(1rem, 4vw, 1.5rem));
-    flex-shrink: 0; /* Не стискати кнопку */
+    flex-shrink: 0;
 }
 
 /* --- Адаптація бічної панелі Menu Secondary --- */

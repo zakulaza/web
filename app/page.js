@@ -1,5 +1,5 @@
 // app/page.js
-'use client'; // Робимо це клієнтським компонентом для завантаження даних
+'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -26,10 +26,13 @@ export default function LandingPage() {
                 <header className="landingHeader">
                     <span className="landingLogo">Breadcrump</span>
                     <div className="landingNav">
-                        <Link href="/login" className="landingLoginBtn">
-                            Login
-                        </Link>
-                        <span className="profileIcon">👤</span>
+                        {/* ЗМІНА 1: Видаляємо посилання з хедера. Залишаємо просто текст або видаляємо.
+                           Я залишаю текст 'Вхід' для відповідності скріншоту.
+                        */}
+                        <span className="landingLoginBtn">
+
+                        </span>
+                        <span className="profileIcon"> </span>
                     </div>
                 </header>
 
@@ -42,13 +45,14 @@ export default function LandingPage() {
                             <Link href="#" className="bannerBtn light">
                                 Підключити заклад
                             </Link>
-                            <Link href="#" className="bannerBtn dark">
+                            {/* ЗМІНА 2: Додаємо посилання на вхід для власників до кнопки "Увійти в кабінет" */}
+                            <Link href="/login?role=owner" className="bannerBtn dark">
                                 Увійти в кабінет
                             </Link>
                         </div>
                     </div>
                     <div className="bannerImage">
-                        {/*  */}
+                        {/* */}
                     </div>
                 </section>
 
@@ -101,7 +105,7 @@ export default function LandingPage() {
                         </Link>
                     </div>
                     <div className="bannerImage">
-                        {/*  */}
+                        {/* */}
                     </div>
                 </section>
 

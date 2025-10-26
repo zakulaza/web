@@ -1,17 +1,29 @@
-// app/menu/page.js
 'use client';
 
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { Settings, ArrowLeft } from 'lucide-react';
 import ProfileModal from '../components/ProfileModal';
-import { ArrowLeft, Settings, User } from 'lucide-react'; // Імпортуємо іконки
 
 export default function MenuPage() {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const { data: session, status } = useSession();
     const router = useRouter();
+
+    // --- ДАНІ ЗАГЛУШКИ (ЖОРСТКО КОДОВАНІ) ---
+    const establishmentName = 'NAZVA';
+    const restaurantAddress = 'Rynok square, 39';
+    const userLevel = 'lvl. 23';
+    const restaurantRating = '★★★★☆';
+    const RESTAURANT_ID = 1;
+
+    // Дані користувача з сесії
+    const userName = session?.user?.name || 'Клієнт';
+    const profileInitial = userName.charAt(0);
+    const userImage = session?.user?.image;
 
     // Стан завантаження або неавторизований (перевірка сесії)
     if (status === "loading") {
@@ -29,67 +41,72 @@ export default function MenuPage() {
                 onClose={() => setIsProfileOpen(false)}
             />
 
-            {/* Контейнер сторінки */}
             <main className="pageContainer menuPageContainer">
 
-                {/* Обгортка контенту */}
-                <div className="primaryMenuContentWrapper updatedDesign">
+                {/* --- 1. ХЕДЕР З ФОНОМ (ПОВНА ШИРИНА) --- */}
+                <div className="menuHeaderImage updatedHeader">
+                    <Image
+                        src="/images/restaurant_nazva.jpg"
+                        alt="Фон закладу"
+                        layout="fill"
+                        objectFit="cover"
+                        className="menuBackground"
+                    />
 
-                    {/* Хедер з фоновим зображенням та іконками */}
-                    <div className="menuHeaderImage updatedHeader">
-                        {/* Іконки у хедері */}
-                        <div className="headerIconsOverlay">
-                            <button onClick={() => router.back()} className="headerIconBtn backBtn">
-                                <ArrowLeft size={20} strokeWidth={2.5} /> {/* Заміна ← */}
+                    {/* Накладання іконок: ОБМЕЖЕНО width: var(--card-max-width) */}
+                    <div className="headerIconsOverlay" style={{maxWidth: 'var(--card-max-width)', margin: '0 auto'}}>
+                        <button onClick={() => router.back()} className="headerIconBtn backBtn">
+                            <ArrowLeft size={24} />
+                        </button>
+                        <div className="headerIconsRight">
+                            <button className="headerIconBtn settingsBtn">
+                                <Settings size={20} />
                             </button>
-                            <div className="headerIconsRight">
-                                <button className="headerIconBtn settingsBtn">
-                                    <Settings size={20} strokeWidth={2.5} /> {/* Заміна ⚙️ */}
-                                </button>
-                                <button className="headerIconBtn profileBtn" onClick={() => setIsProfileOpen(true)}>
-                                    {session?.user?.image ? (
-                                        <img src={session.user.image} alt="profile" />
-                                    ) : (
-                                        <User size={20} strokeWidth={2.5} /> // Заміна 👤
-                                    )}
-                                </button>
-                            </div>
+                            {/* ВИПРАВЛЕННЯ: КНОПКА ПРОФІЛЮ ЯК У menu-secondary/page.js */}
+                            <span className="headerIconBtn profileBtn" onClick={() => setIsProfileOpen(true)}>
+                                {session?.user?.image ? (
+                                    <img src={userImage} alt="profile" className="headerProfileImage" />
+                                ) : (
+                                    <span className="profileLetter">{profileInitial}</span>
+                                )}
+                            </span>
                         </div>
                     </div>
+                </div>
 
-                    {/* Оновлена картка профілю */}
-                    <div className="menuProfileCard updatedCard">
+                {/* --- 2. КАРТКА ПРОФІЛЮ (ВИКОРИСТОВУЄ var(--card-max-width)) --- */}
+                <div className="relative z-10 w-full" style={{maxWidth: 'var(--card-max-width)', margin: '0 auto'}}>
+                    <div className="menuProfileCard updatedCard -mt-20">
                         <div className="cardTopRow">
+
                             <div className="cardAvatar"></div>
+
                             <div className="cardInfo">
-                                {/* Ім'я користувача або назва */}
-                                <h2>{session?.user?.name || 'NAZVA'}</h2>
-                                <p className="cardRating">★★★★☆</p>
-                                <span className="cardAddress">Rynok square, 39</span>
+                                <h2>{establishmentName}</h2>
+                                <p className="cardRating">{restaurantRating}</p>
+                                <span className="cardAddress">{restaurantAddress}</span>
                             </div>
-                            <div className="cardLevel">
-                                {/* TODO: Отримувати level з сесії */}
-                                <span>lvl. 23</span>
-                            </div>
+                            <span className="cardLevel">{userLevel}</span>
                         </div>
                         <div className="cardProgressBarContainer">
-                            {/* TODO: Отримувати progress з сесії */}
-                            <div className="cardProgressBarFill" style={{ width: '40%' }}></div>
+                            <div className="cardProgressBarFill" style={{ width: '70%' }}></div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Оновлений список меню */}
+                {/* --- 3. СПИСОК КАТЕГОРІЙ МЕНЮ (ВИКОРИСТОВУЄ var(--nav-max-width)) --- */}
+                <div className="primaryMenuContentWrapper updatedDesign pt-8">
                     <nav className="menuNavList updatedList">
-                        <Link href="/menu-secondary?category=Гарячі страви" className="menuNavItem updatedItem">
+                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Гарячі страви`} className="menuNavItem updatedItem">
                             Кухня
                         </Link>
-                        <Link href="/menu-secondary?category=Напої" className="menuNavItem updatedItem">
+                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Напої`} className="menuNavItem updatedItem">
                             Напої
                         </Link>
-                        <Link href="/menu-secondary?category=Алкогольні напої" className="menuNavItem updatedItem">
+                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Алкогольні напої`} className="menuNavItem updatedItem">
                             Алкоголь
                         </Link>
-                        <Link href="/menu-secondary?category=Мерч" className="menuNavItem updatedItem">
+                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Мерч`} className="menuNavItem updatedItem">
                             Мерч
                         </Link>
                     </nav>

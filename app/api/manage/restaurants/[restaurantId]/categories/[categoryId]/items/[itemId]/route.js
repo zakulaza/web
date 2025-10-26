@@ -1,14 +1,12 @@
 // app/api/manage/restaurants/[restaurantId]/categories/[categoryId]/items/[itemId]/route.js
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-// !!! Перевірте правильність шляху до authOptions !!!
-import { authOptions } from '../../../../../../../auth/[...nextauth]/route';
-// !!! Перевірте правильність шляху до prisma !!!
-import prisma from '../../../../../../../../lib/prisma';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import prisma from '@/lib/prisma';
 
 // --- Функція для перевірки доступу власника до товару ---
+// (Ця функція залишається без змін, вона приймає чистий 'itemId')
 async function verifyOwnerAccess(session, restaurantId, categoryId, itemId) {
-    // --- 👇 ДОДАНО LOGI 👇 ---
     console.log('Verifying access for:', {
         sessionEmail: session?.user?.email,
         role: session?.user?.role,
@@ -16,10 +14,9 @@ async function verifyOwnerAccess(session, restaurantId, categoryId, itemId) {
         categoryId,
         itemId
     });
-    // --------------------------
 
     if (!session?.user?.email || session.user.role !== 'OWNER' || isNaN(restaurantId) || isNaN(categoryId) || isNaN(itemId)) {
-        console.log('Basic check failed:', { session, restaurantId, categoryId, itemId }); // Додано
+        console.log('Basic check failed:', { session, restaurantId, categoryId, itemId });
         return false;
     }
     try {
@@ -34,30 +31,16 @@ async function verifyOwnerAccess(session, restaurantId, categoryId, itemId) {
                     },
                 },
             },
-            // Додамо вибірку для логування
             select: {
                 id: true,
                 name: true,
-                category: {
-                    select: {
-                        id: true,
-                        name: true,
-                        restaurant: {
-                            select: {
-                                id: true,
-                                name: true,
-                                owner: { select: { email: true }}
-                            }
-                        }
-                    }
-                }
             }
         });
 
-        console.log('Item found by Prisma in verifyOwnerAccess:', item); // Додано
+        console.log('Item found by Prisma in verifyOwnerAccess:', item);
         return !!item;
     } catch (error) {
-        console.error('Error in verifyOwnerAccess Prisma query:', error); // Додано
+        console.error('Error in verifyOwnerAccess Prisma query:', error);
         return false;
     }
 }
@@ -65,10 +48,13 @@ async function verifyOwnerAccess(session, restaurantId, categoryId, itemId) {
 // --- PUT: Оновити товар ---
 export async function PUT(request, { params }) {
     const session = await getServerSession(authOptions);
-    // Перетворюємо рядкові параметри з URL на числа
-    const restaurantId = parseInt(params.restaurantId);
-    const categoryId = parseInt(params.categoryId);
-    const itemId = parseInt(params.itemId);
+
+    // --- ↓↓↓ ОСНОВНА ЗМІНА ТУТ (ПОВЕРНУЛИ) ↓↓↓ ---
+    // Ми читаємо params.itemId (БЕЗ 's'), бо папка називається [itemId]
+    const restaurantId = parseInt(params.restaurantId, 10);
+    const categoryId = parseInt(params.categoryId, 10);
+    const itemId = parseInt(params.itemId, 10); // Використовуємо .itemId
+    // --- ↑↑↑ ОСНОВНА ЗМІНА ТУТ (ПОВЕРНУЛИ) ↑↑↑ ---
 
     const hasAccess = await verifyOwnerAccess(session, restaurantId, categoryId, itemId);
     if (!hasAccess) {
@@ -94,8 +80,8 @@ export async function PUT(request, { params }) {
             data: {
                 name: data.name,
                 description: data.description,
-                price: price, // Використовуємо перетворене значення
-                calories: calories, // Використовуємо перетворене значення або null
+                price: price,
+                calories: calories,
                 imageUrl: data.imageUrl,
             },
         });
@@ -111,30 +97,33 @@ export async function PUT(request, { params }) {
 // --- DELETE: Видалити товар ---
 export async function DELETE(request, { params }) {
     const session = await getServerSession(authOptions);
-    const restaurantId = parseInt(params.restaurantId);
-    const categoryId = parseInt(params.categoryId);
-    const itemId = parseInt(params.itemId);
 
-    console.log(`--- DELETE request received for item ${itemId} ---`); // Додано лог
+    // --- ↓↓↓ ОСНОВНА ЗМІНА ТУТ (ПОВЕРНУЛИ) ↓↓↓ ---
+    // Ми читаємо params.itemId (БЕЗ 's'), бо папка називається [itemId]
+    const restaurantId = parseInt(params.restaurantId, 10);
+    const categoryId = parseInt(params.categoryId, 10);
+    const itemId = parseInt(params.itemId, 10); // Використовуємо .itemId
+    // --- ↑↑↑ ОСНОВНА ЗМІНА ТУТ (ПОВЕРНУЛИ) ↑↑↑ ---
+
+    console.log(`--- DELETE request received for item ${itemId} ---`); // Тепер тут має бути 40
 
     const hasAccess = await verifyOwnerAccess(session, restaurantId, categoryId, itemId);
     if (!hasAccess) {
-        console.log(`Access denied or item not found for delete request.`); // Додано лог
+        console.log(`Access denied or item not found for delete request.`);
         return NextResponse.json({ error: 'Item not found or access denied' }, { status: 404 });
     }
 
     try {
-        console.log(`Attempting to delete dish with id: ${itemId}`); // Додано лог
+        console.log(`Attempting to delete dish with id: ${itemId}`);
         await prisma.dish.delete({
             where: { id: itemId },
         });
-        console.log(`Successfully deleted dish with id: ${itemId}`); // Додано лог
+        console.log(`Successfully deleted dish with id: ${itemId}`);
 
         return NextResponse.json({ message: 'Item deleted successfully' }, { status: 200 });
 
     } catch (error) {
         console.error('Error deleting item:', error);
-        // Додамо перевірку на конкретну помилку Prisma (якщо запис не знайдено)
         if (error.code === 'P2025') {
             console.log(`Prisma error P2025: Record to delete does not exist.`);
             return NextResponse.json({ error: 'Item not found' }, { status: 404 });
