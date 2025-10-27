@@ -92,7 +92,7 @@ export default function MenuPage() {
                         <div className="flex items-center gap-4 mb-4">
                             {/* cardAvatar */}
                             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-200 border-2 sm:border-4 border-white flex-shrink-0 flex items-center justify-center"></div>
-                            
+
                             {/* cardInfo */}
                             <div className="flex-grow overflow-hidden">
                                 <h2 className="m-0 text-xl sm:text-2xl font-semibold truncate">{establishmentName}</h2>
@@ -134,3 +134,4 @@ export default function MenuPage() {
         </>
     );
 }
+

@@ -10,28 +10,37 @@ export default function CheckRolePage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Як тільки сесія завантажиться...
+
+        // Якщо статус 'loading', ми просто чекаємо.
+        if (status === 'loading') {
+            return;
+        }
+
+        // Як тільки статус змінюється...
         if (status === 'authenticated') {
-            // Перевіряємо роль і перенаправляємо
-            if (session?.user?.role === 'OWNER') {
-                router.replace('/manage/restaurants'); // replace, щоб не можна було повернутись назад
+            // УСПІХ: Сесія готова.
+            const userRole = session.user?.role;
+            if (userRole === 'OWNER') {
+                router.replace('/manage/restaurants');
             } else {
                 router.replace('/menu');
             }
-        } else if (status === 'unauthenticated') {
-            // Якщо з якоїсь причини не вдалося увійти, повертаємо на логін
-            router.replace('/login');
         }
-        // Залежності: status, session, router
+
+        if (status === 'unauthenticated') {
+            // Якщо щось пішло не так (наприклад, Google відхилив),
+            // повертаємо на логін з помилкою.
+            router.replace('/login?error=AuthFailed');
+        }
+
     }, [status, session, router]);
 
-    // Поки йде перевірка, показуємо завантаження
+    // Поки йде перевірка, показуємо екран завантаження
     return (
-        // pageContainer + menuPageContainer -> Tailwind
-        <main className="w-full min-h-screen flex flex-col bg-white justify-start">
-            {/* style={{...}} -> Tailwind */}
+        <main className="w-full min-h-screen flex flex-col bg-white justify-center items-center">
             <div className="p-8 text-center text-gray-600">
-                Перевірка ролі...
+                <p className="text-lg font-medium">Завершуємо вхід...</p>
+                <p>Будь ласка, зачекайте.</p>
             </div>
         </main>
     );

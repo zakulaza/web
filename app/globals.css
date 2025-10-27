@@ -1,19 +1,39 @@
-/* app/globals.css */
+/* ==================================================================== */
+/* === GLOBALS.CSS - ТІЛЬКИ БАЗОВІ НАЛАШТУВАННЯ TAILWIND === */
+/* ==================================================================== */
 
 /* 1. Базові стилі Tailwind */
 @tailwind base;
 
-/* 2. Компонентні стилі Tailwind (для посилань, кнопок тощо) */
+/* 2. Компонентні стилі Tailwind */
 @tailwind components;
 
-/* 3. Утилітні класи Tailwind (для всіх класів: flex, p-4, bg-white тощо) */
+/* 3. Утилітні класи Tailwind */
 @tailwind utilities;
 
-/* Якщо у вас є будь-які власні стилі, які ви хочете зберегти,
-   наприклад, стилі для HTML-тегів, ви можете додати їх тут: */
-/*
-body {
-    background-color: #f0f2f5;
-    font-family: sans-serif;
-}
-*/
+/* === БАЗОВІ СТИЛІ ТА МАСШТАБУВАННЯ (ЗБЕРЕЖЕНО) === */
+/* Ці стилі застосовуються до базових елементів */
+/*@layer base {
+    :root {
+
+        font-size: clamp(0.875rem, 1vw + 0.1rem, 1rem);
+
+        --content-padding: clamp(1rem, 4vw, 2.5rem);
+        --vertical-padding: clamp(1.5rem, 4vh, 2rem);
+    }*/
+
+    html {
+        @apply box-border scroll-smooth;
+    }
+    *, *:before, *:after {
+        @apply box-border;
+    }
+
+    body {
+        @apply bg-gray-100 text-gray-800 font-sans m-0 p-0 min-h-screen leading-relaxed antialiased;
+    }
+
+
+/* !!! УСІ КЛАСИ В @layer components БУЛО ВИДАЛЕНО !!! */
+/* Стилі тепер мають бути прописані безпосередньо в JSX за допомогою утилітарних класів Tailwind */
+

@@ -2,7 +2,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+// 1. ІМПОРТУЄМО useSearchParams
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import { Mail, Lock, User, LogIn } from 'lucide-react'; // Імпорт іконок для естетики
@@ -12,7 +13,14 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
-    const { data: session, status, update } = useSession(); 
+    const { data: session, status, update } = useSession();
+
+    // 2. ОТРИМУЄМО ПАРАМЕТРИ З URL
+    const searchParams = useSearchParams();
+    const isOwnerLogin = searchParams.get('role') === 'owner';
+
+    // 3. СТВОРЮЄМО ДИНАМІЧНИЙ ЗАГОЛОВОК
+    const title = isOwnerLogin ? 'Вхід для власників' : 'Вхід';
 
     // --- ОНОВЛЮЄМО ЛОГІН ЧЕРЕЗ EMAIL/ПАРОЛЬ ---
     const handleLogin = async (e) => {
@@ -28,15 +36,11 @@ export default function LoginPage() {
         if (result.error) {
             setError(result.error);
         } else if (result.ok) {
-            // Вхід успішний
-            // Оновлюємо сесію, щоб отримати роль
-            // NOTE: Це може бути зайвим, якщо `signIn` вже повернув оновлену сесію 
-            // в залежності від конфігурації. Але залишаємо для надійності.
             const updatedSession = await update();
             const userRole = updatedSession?.user?.role || session?.user?.role;
-            
+
             if (userRole === 'OWNER') {
-                router.push('/manage/restaurants'); 
+                router.push('/manage/restaurants');
             } else {
                 router.push('/menu');
             }
@@ -58,14 +62,14 @@ export default function LoginPage() {
             </main>
         );
     }
-    
+
     // Якщо користувач вже аутентифікований, перенаправляємо його (запобігає циклу)
     if (status === 'authenticated') {
         // Це має обробити /auth/check-role, але додаємо на випадок прямого входу
         if (session?.user?.role === 'OWNER') {
-             router.replace('/manage/restaurants');
+            router.replace('/manage/restaurants');
         } else {
-             router.replace('/menu');
+            router.replace('/menu');
         }
         return null;
     }
@@ -81,8 +85,8 @@ export default function LoginPage() {
                 {/* loginCloseBtn */}
                 <Link href="/" className="absolute top-4 right-4 text-2xl text-gray-400 no-underline font-bold hover:text-gray-600">×</Link>
 
-                {/* loginTitle */}
-                <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-900 text-left">Вхід</h1>
+                {/* 4. ЗАМІНЮЄМО СТАРИЙ H1 НА ДИНАМІЧНИЙ */}
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-900 text-left">{title}</h1>
 
                 <form onSubmit={handleLogin}>
 
@@ -133,13 +137,18 @@ export default function LoginPage() {
                     <span className="font-bold text-lg text-red-600">G</span> Продовжити через Google
                 </button>
 
-                {/* loginLinks */}
+                {/* 5. ЗАМІНЮЄМО СТАТИЧНІ ПОСИЛАННЯ НА ДИНАМІЧНІ */}
                 <div className="flex justify-between mt-6 sm:mt-8 flex-wrap gap-2">
-                    {/* loginLink (для власника) */}
-                    <Link href="/login?role=owner" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
-                        Увійти як власник
-                    </Link>
-                    {/* loginLink (для реєстрації) */}
+                    {isOwnerLogin ? (
+                        <Link href="/login" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
+                            Увійти як клієнт
+                        </Link>
+                    ) : (
+                        <Link href="/login?role=owner" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
+                            Увійти як власник
+                        </Link>
+                    )}
+
                     <Link href="/signup" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
                         Ще не зареєстрований?
                     </Link>
