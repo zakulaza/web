@@ -1,10 +1,20 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    // --- ↓↓↓ Ваші налаштування для Абсолютних Імпортів 👇 ---
+    "baseUrl": ".",
+    "paths": {
+      "@/app/*": ["app/*"], // <-- Я РЕКОМЕНДУЮ ДОДАТИ ЦЕ
+      "@/components/*": ["app/components/*"],
+      "@/context/*": ["context/*"],
+      "@/lib/*": ["lib/*"]
+    },
+    // --- ↑↑↑ Ваші налаштування для Абсолютних Імпортів ↑↑↑ ---
+    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -18,10 +28,14 @@
         "name": "next"
       }
     ],
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "strictNullChecks": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "**/*.js" // <-- Ваше правильне доповнення
+  ],
   "exclude": ["node_modules"]
 }

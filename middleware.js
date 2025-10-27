@@ -1,4 +1,3 @@
-// middleware.js
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 
@@ -15,7 +14,7 @@ export default withAuth(
             return NextResponse.redirect(new URL('/', req.url));
         }
 
-        // Якщо це власник або інша сторінка - пропускаємо
+        // Якщо це власник або інша сторінка (включно з /auth/check-role) - пропускаємо
         return NextResponse.next();
     },
     {
@@ -36,5 +35,7 @@ export const config = {
         '/manage/:path*', // Всі сторінки, що починаються з /manage
         '/menu/:path*', // Також захищаємо сторінки меню
         '/menu-secondary/:path*',
+        // '/auth/check-role', // <-- ВИДАЛЕНО: Ця сторінка має бути публічною
     ],
 };
+

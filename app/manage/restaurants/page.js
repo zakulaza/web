@@ -5,14 +5,12 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import AddRestaurantModal from '../../components/AddRestaurantModal'; // Імпортуємо модалку
+import { Settings, Trash2, User, Plus } from 'lucide-react'; // Додано іконки
 
 export default function ManageRestaurantsPage() {
     const [restaurants, setRestaurants] = useState([]);
     const { data: session, status } = useSession();
-    const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модалки
 
-    // Завантажуємо ресторани власника
     useEffect(() => {
         if (status === 'authenticated') {
             fetch('/api/manage/restaurants')
@@ -31,102 +29,112 @@ export default function ManageRestaurantsPage() {
         }
     }, [status]);
 
-    // Функція для оновлення списку після додавання
-    const handleRestaurantAdded = (newRestaurant) => {
-        setRestaurants((prevRestaurants) => [...prevRestaurants, newRestaurant]);
-    };
-
-    // Показуємо завантаження
     if (status === 'loading') {
-        return <main className="pageContainer menuPageContainer"><div className="loadingText">Завантаження...</div></main>;
+        // pageContainer + menuPageContainer + loadingText
+        return (
+            <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+                <div className="p-8 text-center text-gray-500">Завантаження...</div>
+            </main>
+        );
     }
 
-    // Доступ заборонено (хоча middleware мав би це обробити)
     if (status === 'unauthenticated') {
-        return <main className="pageContainer menuPageContainer"><div className="loadingText">Доступ заборонено.</div></main>;
+        // pageContainer + menuPageContainer + loadingText
+        return (
+            <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+                <div className="p-8 text-center text-gray-500">Доступ заборонено.</div>
+            </main>
+        );
     }
+
 
     return (
-        <>
-            {/* Модальне вікно для додавання */}
-            <AddRestaurantModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onRestaurantAdded={handleRestaurantAdded}
-            />
+        // pageContainer + menuPageContainer
+        <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+            {/* manageContentWrapper */}
+            <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
+                {/* manageHeader */}
+                <header className="flex justify-between items-center mb-8 pb-6 border-b border-gray-200 flex-wrap gap-4">
+                    {/* manageHeaderTitle */}
+                    <div className="manageHeaderTitle">
+                        <h1 className="m-0 text-sm font-semibold tracking-wider text-gray-600 uppercase">MANAGER MODE</h1>
+                    </div>
+                    {/* manageHeaderUser */}
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                        {/* profileIcon */}
+                        <User size={16} className="text-gray-500" />
+                        <span>{session?.user?.email}</span>
+                    </div>
+                </header>
 
-            {/* Основний контент сторінки */}
-            <main className="pageContainer menuPageContainer">
-                <div className="manageContentWrapper">
-                    {/* Хедер Адмін-панелі */}
-                    <header className="manageHeader">
-                        <div className="manageHeaderTitle">
-                            <h1>MANAGER MODE</h1>
+                {/* manageSection */}
+                <section className="mb-8 sm:mb-12">
+                    {/* manageSectionHeader */}
+                    <div className="flex justify-between items-start mb-6 gap-4 flex-wrap">
+                        <div>
+                            <h2 className="m-0 mb-1 text-2xl sm:text-3xl font-bold">My Restaurants</h2>
+                            <p className="m-0 text-gray-500 text-base">Manage your restaurants and menus</p>
                         </div>
-                        <div className="manageHeaderUser">
-                            <span className="profileIcon">👤</span>
-                            {/* Можна вивести email власника */}
-                            {/* <span>{session?.user?.email}</span> */}
-                        </div>
-                    </header>
+                        {/* manageAddButton */}
+                        <button className="bg-indigo-600 text-white border-none rounded-lg px-5 py-3 text-sm sm:text-base font-medium cursor-pointer whitespace-nowrap transition hover:bg-indigo-700 flex items-center gap-2">
+                            <Plus size={20} />
+                            Add Restaurant
+                        </button>
+                    </div>
 
-                    {/* Секція "My Restaurants" */}
-                    <section className="manageSection">
-                        <div className="manageSectionHeader">
-                            <div>
-                                <h2>My Restaurants</h2>
-                                <p>Manage your restaurants and menus</p>
-                            </div>
-                            {/* Кнопка відкриває модалку */}
-                            <button
-                                className="manageAddButton"
-                                onClick={() => setIsModalOpen(true)}
-                            >
-                                + Add Restaurant
-                            </button>
-                        </div>
-
-                        {/* Список ресторанів власника */}
-                        <div className="manageRestaurantList">
-                            {Array.isArray(restaurants) && restaurants.length > 0 ? (
-                                restaurants.map((restaurant) => (
-                                    <div key={restaurant.id} className="manageRestaurantCard">
-                                        <div className="manageRestaurantImage">
-                                            <Image
-                                                src={restaurant.imageUrl || '/images/placeholder.jpg'}
-                                                alt={restaurant.name}
-                                                layout="fill"
-                                                objectFit="cover"
-                                            />
-                                        </div>
-                                        <div className="manageRestaurantInfo">
-                                            <h3>{restaurant.name}</h3>
-                                            <p>{restaurant.description || 'No description'}</p>
-                                            <div className="manageRestaurantStats">
-                                                <span><strong>{/* TODO */}</strong> Categories</span>
-                                                <span><strong>{restaurant.orders?.length || 0}</strong> Orders</span>
-                                                <span><strong>${/* TODO */}</strong> Revenue</span>
-                                            </div>
-                                        </div>
-                                        <div className="manageRestaurantActions">
-                                            <span className="actionIcon">⚙️</span>
-                                            <span className="actionIcon">🗑️</span>
-                                            <Link
-                                                href={`/manage/restaurants/${restaurant.id}/categories`}
-                                                className="manageMenuButton"
-                                            >
-                                                MENAGE MENU
-                                            </Link>
+                    {/* manageRestaurantList */}
+                    <div className="flex flex-col gap-4 sm:gap-6">
+                        {Array.isArray(restaurants) && restaurants.length > 0 ? (
+                            restaurants.map((restaurant) => (
+                                // manageRestaurantCard
+                                <div key={restaurant.id} className="bg-white rounded-xl shadow-lg flex flex-col md:flex-row md:items-center gap-4 md:gap-6 p-4 md:p-6 overflow-hidden">
+                                    {/* manageRestaurantImage */}
+                                    <div className="relative w-full h-48 md:w-48 md:h-28 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                                        <Image
+                                            src={restaurant.imageUrl || '/images/placeholder.jpg'}
+                                            alt={restaurant.name}
+                                            layout="fill"
+                                            objectFit="cover"
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    {/* manageRestaurantInfo */}
+                                    <div className="flex-grow text-left">
+                                        <h3 className="m-0 mb-2 text-lg sm:text-xl font-semibold">{restaurant.name}</h3>
+                                        <p className="m-0 mb-4 text-gray-500 text-sm line-clamp-2">{restaurant.description || 'No description'}</p>
+                                        {/* manageRestaurantStats */}
+                                        <div className="flex flex-wrap gap-6 text-sm text-gray-600">
+                                            <span><strong className="text-black">{/* TODO */}</strong> Categories</span>
+                                            <span><strong className="text-black">{restaurant.orders?.length || 0}</strong> Orders</span>
+                                            <span><strong className="text-black">${/* TODO */}</strong> Revenue</span>
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <p className="noDataText">You haven't added any restaurants yet.</p>
-                            )}
-                        </div>
-                    </section>
-                </div>
-            </main>
-        </>
+                                    {/* manageRestaurantActions */}
+                                    <div className="flex items-center gap-4 flex-shrink-0 mt-4 pt-4 border-t border-gray-100 justify-between md:border-t-0 md:pt-0 md:mt-0 md:justify-start">
+                                        {/* actionIcon */}
+                                        <button className="text-xl cursor-pointer text-gray-500 transition hover:text-gray-800">
+                                            <Settings size={20} />
+                                        </button>
+                                        <button className="text-xl cursor-pointer text-gray-500 transition hover:text-red-500">
+                                            <Trash2 size={20} />
+                                        </button>
+                                        {/* manageMenuButton */}
+                                        <Link
+                                            href={`/manage/restaurants/${restaurant.id}/categories`}
+                                            className="bg-gray-100 text-indigo-600 rounded-lg px-4 py-2 text-sm font-medium cursor-pointer no-underline whitespace-nowrap transition hover:bg-gray-200"
+                                        >
+                                            MENAGE MENU
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            // noDataText
+                            <p className="text-gray-500 text-center p-8">You haven't added any restaurants yet.</p>
+                        )}
+                    </div>
+                </section>
+            </div>
+        </main>
     );
 }

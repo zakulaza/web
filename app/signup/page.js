@@ -38,44 +38,70 @@ export default function SignupPage() {
     };
 
     return (
-        <main className="loginScreen">
-            <h1 className="loginTitle">Реєстрація</h1>
+        // pageContainer + loginPageContainer
+        <main className="w-full min-h-screen flex flex-col justify-center items-center p-4 bg-gray-100">
 
-            <form onSubmit={handleSubmit}>
-                <div className="inputGroup">
-                    <label htmlFor="email">E-mail</label>
-                    <input
-                        type="email"
-                        id="email"
-                        className="loginInput"
-                        placeholder="Введіть e-mail"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+            {/* loginContentWrapper */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10 max-w-md w-full relative">
+
+                {/* loginCloseBtn */}
+                <Link href="/" className="absolute top-4 right-4 text-2xl text-gray-400 no-underline font-bold hover:text-gray-600">×</Link>
+
+                {/* loginTitle */}
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-900 text-left">Реєстрація</h1>
+
+                <form onSubmit={handleSubmit}>
+
+                    {/* inputGroup (з label) */}
+                    <div className="mb-5 text-left">
+                        <label htmlFor="email" className="block font-medium mb-2 text-sm text-gray-700">
+                            E-mail
+                        </label>
+                        {/* loginInput */}
+                        <input
+                            type="email"
+                            id="email"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Введіть e-mail"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    {/* inputGroup (з label) */}
+                    <div className="mb-5 text-left">
+                        <label htmlFor="password" className="block font-medium mb-2 text-sm text-gray-700">
+                            Пароль
+                        </label>
+                        {/* loginInput */}
+                        <input
+                            type="password"
+                            id="password"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Введіть пароль"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {/* loginError */}
+                    {error && <p className="text-red-700 bg-red-100 border border-red-200 rounded-lg p-3 text-center text-sm mt-4">{error}</p>}
+
+                    {/* loginSubmitBtn */}
+                    <button type="submit" className="w-full p-3 sm:p-4 border-none rounded-lg bg-green-500 text-white text-base sm:text-lg font-bold cursor-pointer mt-4 transition hover:bg-green-600">
+                        Зареєструватись
+                    </button>
+                </form>
+
+                {/* loginLinks */}
+                <div className="flex justify-between mt-6 flex-wrap gap-2">
+                    {/* loginLink */}
+                    <Link href="/login" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
+                        Вже зареєстрований?
+                    </Link>
                 </div>
-                <div className="inputGroup">
-                    <label htmlFor="password">Пароль</label>
-                    <input
-                        type="password"
-                        id="password"
-                        className="loginInput"
-                        placeholder="Введіть пароль"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
 
-                {error && <p className="loginError">{error}</p>}
-
-                <button type="submit" className="loginSubmitBtn">
-                    Зареєструватись
-                </button>
-            </form>
-
-            <div className="loginLinks">
-                <Link href="/login" className="loginLink">Вже зареєстрований?</Link>
             </div>
         </main>
     );

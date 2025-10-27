@@ -8,13 +8,15 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('Start seeding ...');
 
-    // --- Чистимо старі дані ---
+    // --- Чистимо старі дані (ДОДАНО АЧІВКИ) ---
+    await prisma.userAchievement.deleteMany({}); // <--- ДОДАНО
+    await prisma.achievement.deleteMany({});     // <--- ДОДАНО
     await prisma.dish.deleteMany({});
     await prisma.category.deleteMany({});
     await prisma.order.deleteMany({});
     await prisma.restaurant.deleteMany({});
     await prisma.user.deleteMany({});
-    console.log('Cleaned existing data.');
+    console.log('Очищено існуючі дані (включно з ачівками).');
 
 
     // --- 1. Створюємо Власника ---
@@ -67,6 +69,7 @@ async function main() {
     // --- 5. Створюємо ДУЖЕ БАГАТО Страв для "NAZVA" ---
     await prisma.dish.createMany({
         data: [
+            // ... (ваші страви залишаються тут) ...
             // Гарячі страви
             { name: 'Котлета по-київськи', description: '200г, з картопляним пюре', price: 220.0, calories: 550, imageUrl: '/images/kiev.jpg', categoryId: categoryHotDishes.id },
             { name: 'Вареники з картоплею та грибами', description: '250г, зі шкварками та сметаною', price: 130.0, calories: 480, imageUrl: '/images/varenyky_mush.jpg', categoryId: categoryHotDishes.id },
@@ -74,47 +77,39 @@ async function main() {
             { name: 'Стейк Рібай', description: '300г, з овочами гриль', price: 450.0, calories: 600, imageUrl: '/images/ribeye.jpg', categoryId: categoryHotDishes.id },
             { name: 'Лосось на грилі', description: '180г, з рисом та соусом теріякі', price: 350.0, calories: 420, imageUrl: '/images/salmon.jpg', categoryId: categoryHotDishes.id },
             { name: 'Паста Карбонара', description: '350г', price: 210.0, calories: 650, imageUrl: '/images/carbonara.jpg', categoryId: categoryHotDishes.id },
-
             // Супи
             { name: 'Борщ Український', description: '350мл, зі сметаною, пампушками та часником', price: 150.0, calories: 320, imageUrl: '/images/borsch.jpg', categoryId: categorySoups.id },
             { name: 'Солянка м\'ясна', description: '350мл', price: 170.0, calories: 400, imageUrl: '/images/solyanka.jpg', categoryId: categorySoups.id },
             { name: 'Грибний крем-суп', description: '300мл, з грінками', price: 130.0, calories: 280, imageUrl: '/images/mush_soup.jpg', categoryId: categorySoups.id },
-
             // Салати
             { name: 'Салат Цезар з куркою', description: '250г', price: 180.0, calories: 380, imageUrl: '/images/caesar.jpg', categoryId: categorySalads.id },
             { name: 'Грецький салат', description: '300г', price: 160.0, calories: 300, imageUrl: '/images/greek.jpg', categoryId: categorySalads.id },
             { name: 'Салат з телятиною та руколою', description: '220г', price: 230.0, calories: 350, imageUrl: '/images/beef_salad.jpg', categoryId: categorySalads.id },
             { name: 'Салат Олів\'є', description: '250г', price: 140.0, calories: 420, imageUrl: '/images/olivier.jpg', categoryId: categorySalads.id },
-
             // Піца
             { name: 'Піца Маргарита', description: '30см', price: 190.0, calories: 800, imageUrl: '/images/margarita.jpg', categoryId: categoryPizza.id },
             { name: 'Піца Пепероні', description: '30см', price: 230.0, calories: 950, imageUrl: '/images/pepperoni.jpg', categoryId: categoryPizza.id },
             { name: 'Піца 4 Сири', description: '30см', price: 250.0, calories: 1000, imageUrl: '/images/4cheese.jpg', categoryId: categoryPizza.id },
-
             // Десерти
             { name: 'Наполеон', description: '150г', price: 90.0, calories: 500, imageUrl: '/images/napoleon.jpg', categoryId: categoryDesserts.id },
             { name: 'Чізкейк Нью-Йорк', description: '140г', price: 110.0, calories: 480, imageUrl: '/images/cheesecake.jpg', categoryId: categoryDesserts.id },
             { name: 'Шоколадний фондан', description: '120г, з кулькою морозива', price: 130.0, calories: 550, imageUrl: '/images/fondant.jpg', categoryId: categoryDesserts.id },
             { name: 'Тирамісу', description: '130г', price: 120.0, calories: 450, imageUrl: '/images/tiramisu.jpg', categoryId: categoryDesserts.id },
-
             // Кава
             { name: 'Кава "Dristachino"', description: 'Особливий рецепт', price: 80.0, calories: 120, imageUrl: '/images/coffee.jpg', categoryId: categoryCoffee.id },
             { name: 'Еспресо', description: '30мл', price: 50.0, calories: 5, imageUrl: '/images/espresso.jpg', categoryId: categoryCoffee.id },
             { name: 'Американо', description: '150мл', price: 55.0, calories: 10, imageUrl: '/images/americano.jpg', categoryId: categoryCoffee.id },
             { name: 'Капучино', description: '200мл', price: 65.0, calories: 120, imageUrl: '/images/cappuccino.jpg', categoryId: categoryCoffee.id },
             { name: 'Лате', description: '250мл', price: 70.0, calories: 150, imageUrl: '/images/latte.jpg', categoryId: categoryCoffee.id },
-
             // Чай
             { name: 'Чай чорний', description: '400мл', price: 50.0, calories: 0, imageUrl: '/images/black_tea.jpg', categoryId: categoryTea.id },
             { name: 'Чай зелений', description: '400мл', price: 50.0, calories: 0, imageUrl: '/images/green_tea.jpg', categoryId: categoryTea.id },
             { name: 'Чай фруктовий', description: '400мл', price: 60.0, calories: 10, imageUrl: '/images/fruit_tea.jpg', categoryId: categoryTea.id },
-
             // Безалкогольні напої
             { name: 'Лимонад класичний', description: '300мл', price: 60.0, calories: 100, imageUrl: '/images/lemonade.jpg', categoryId: categoryNonAlcohol.id },
             { name: 'Мохіто б/а', description: '350мл', price: 80.0, calories: 120, imageUrl: '/images/mojito_na.jpg', categoryId: categoryNonAlcohol.id },
             { name: 'Сік апельсиновий фреш', description: '250мл', price: 75.0, calories: 110, imageUrl: '/images/oj_fresh.jpg', categoryId: categoryNonAlcohol.id },
             { name: 'Coca-Cola', description: '330мл', price: 45.0, calories: 140, imageUrl: '/images/coke.jpg', categoryId: categoryNonAlcohol.id },
-
             // Алкогольні напої (приклади)
             { name: 'Пиво світле "NAZVA"', description: '0.5л', price: 80.0, calories: 200, imageUrl: '/images/beer.jpg', categoryId: categoryAlcohol.id },
             { name: 'Вино червоне сухе', description: '150мл', price: 120.0, calories: 125, imageUrl: '/images/red_wine.jpg', categoryId: categoryAlcohol.id },
@@ -123,9 +118,45 @@ async function main() {
     });
     console.log('Created A LOT of dishes for NAZVA');
 
-    console.log('Seeding finished.');
-}
+    // --- 6. (НОВЕ) Створюємо "Ачівки" (Майстер-список) ---
+    const achCoffeeLover = await prisma.achievement.create({
+        data: {
+            name: 'Coffee Lover',
+            description: 'Tried 10 different coffee items', // Виправив на "10", бо у вас лише 5
+            icon: 'Coffee' // Відповідає іконці, яку ви використовували в ProfileModal
+        }
+    });
 
+    const achExplorer = await prisma.achievement.create({
+        data: {
+            name: 'Explorer',
+            description: 'Visited 5 different restaurants',
+            icon: 'Map' // Відповідає іконці, яку ви використовували в ProfileModal
+        }
+    });
+    console.log('Створено майстер-список ачівок.');
+
+    // --- 7. (НОВЕ) Нагороджуємо "Клієнта" ачівками ---
+    await prisma.userAchievement.create({
+        data: {
+            userId: customer.id,
+            achievementId: achCoffeeLover.id
+        }
+    });
+
+    await prisma.userAchievement.create({
+        data: {
+            userId: customer.id,
+            achievementId: achExplorer.id
+        }
+    });
+    console.log(`Нагороджено ачівками користувача: ${customer.email}`);
+
+
+    console.log('Seeding finished.');
+} // <--- ВАЖЛИВО: ЦЯ ДУЖКА ЗАКРИВАЄ async function main()
+
+// --- ВАЖЛИВО: ЦЕЙ БЛОК ЗАПУСКАЄ ФУНКЦІЮ ---
 main()
     .catch(async (e) => {
         console.error('Error during seeding:', e);

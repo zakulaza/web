@@ -3,14 +3,17 @@ import './globals.css';
 import Providers from './providers'; // NextAuth провайдер
 import { CartProvider } from '../context/CartContext'; // Імпортуємо CartProvider
 
+// --- ВИПРАВЛЕНО: 'viewport' видалено звідси ---
 export const metadata = {
     title: 'NAZVA - Гейміфіковане меню',
     description: 'Вхід для кастомерів та власників',
-    viewport: {
-        width: 'device-width',
-        initialScale: 1,
-        maximumScale: 1,
-    },
+};
+
+// --- ДОДАНО: 'viewport' тепер окремий експорт ---
+export const viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
 };
 
 export default function RootLayout({ children }) {
