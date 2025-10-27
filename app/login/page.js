@@ -1,134 +1,150 @@
+// app/login/page.js
 'use client';
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react'; // Додано useEffect
-import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Settings, ArrowLeft } from 'lucide-react';
-import ProfileModal from '../components/ProfileModal';
+import Link from 'next/link';
+import { signIn, useSession } from 'next-auth/react';
+import { Mail, Lock, User, LogIn } from 'lucide-react'; // Імпорт іконок для естетики
 
-// --- ХУК ДЛЯ МОКОВАННЯ ДОДАТКОВИХ ДАНИХ (РАННІЙ ДОСТУП) ---
-// Цей хук імітує завантаження даних користувача, які не зберігаються в NextAuth сесії
-function useProfileData(session) {
-    const [profileData, setProfileData] = useState({ userLevel: 'lvl. 23', isReady: false });
-
-    useEffect(() => {
-        if (session) {
-            // В реальному житті тут має бути fetch до вашого API: /api/auth/profile
-            // fetch('/api/auth/profile').then(res => res.json()).then(data => {
-            //     setProfileData({ userLevel: data.level, isReady: true });
-            // });
-
-            // Заглушка, що імітує завантаження даних
-            setTimeout(() => {
-                setProfileData({ userLevel: 'LvL. 23', isReady: true });
-            }, 100);
-        }
-    }, [session]);
-
-    return profileData;
-}
-
-export default function MenuPage() {
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const { data: session, status } = useSession();
+export default function LoginPage() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const router = useRouter();
-    const { userLevel, isReady } = useProfileData(session); // Отримуємо рівень
+    const { data: session, status, update } = useSession(); 
 
-    // --- ДАНІ ЗАГЛУШКИ (ЖОРСТКО КОДОВАНІ ДЛЯ ДИЗАЙНУ) ---
-    const establishmentName = 'NAZVA';
-    const restaurantAddress = 'Rynok square, 39';
-    const restaurantRating = '★★★★☆';
-    const RESTAURANT_ID = 1;
+    // --- ОНОВЛЮЄМО ЛОГІН ЧЕРЕЗ EMAIL/ПАРОЛЬ ---
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError('');
 
-    // Дані користувача з сесії
-    const userName = session?.user?.name || 'Клієнт';
-    const profileInitial = userName.charAt(0);
-    const userImage = session?.user?.image;
+        const result = await signIn('credentials', {
+            redirect: false,
+            email: email,
+            password: password,
+        });
 
-    // Стан завантаження або неавторизований (перевірка сесії)
-    if (status === "loading" || !isReady) { // Додано !isReady для очікування рівня
-        return <main className="pageContainer menuPageContainer"><div className="loadingText">Завантаження...</div></main>;
+        if (result.error) {
+            setError(result.error);
+        } else if (result.ok) {
+            // Вхід успішний
+            // Оновлюємо сесію, щоб отримати роль
+            // NOTE: Це може бути зайвим, якщо `signIn` вже повернув оновлену сесію 
+            // в залежності від конфігурації. Але залишаємо для надійності.
+            const updatedSession = await update();
+            const userRole = updatedSession?.user?.role || session?.user?.role;
+            
+            if (userRole === 'OWNER') {
+                router.push('/manage/restaurants'); 
+            } else {
+                router.push('/menu');
+            }
+        }
+    };
+
+    // --- ОНОВЛЮЄМО ЛОГІН ЧЕРЕЗ GOOGLE ---
+    const handleGoogleSignIn = () => {
+        // Перенаправляємо на /auth/check-role для визначення ролі
+        signIn('google', { callbackUrl: '/auth/check-role' });
+    };
+
+    // Обробка стану завантаження сесії
+    if (status === 'loading') {
+        // loadingText
+        return (
+            <main className="w-full min-h-screen flex flex-col justify-center items-center bg-gray-100">
+                <div className="p-8 text-center text-gray-500">Завантаження сесії...</div>
+            </main>
+        );
     }
-    if (status === "unauthenticated") {
-        router.push('/login');
+    
+    // Якщо користувач вже аутентифікований, перенаправляємо його (запобігає циклу)
+    if (status === 'authenticated') {
+        // Це має обробити /auth/check-role, але додаємо на випадок прямого входу
+        if (session?.user?.role === 'OWNER') {
+             router.replace('/manage/restaurants');
+        } else {
+             router.replace('/menu');
+        }
         return null;
     }
 
+
     return (
-        <>
-            <ProfileModal
-                isOpen={isProfileOpen}
-                onClose={() => setIsProfileOpen(false)}
-            />
+        // pageContainer + loginPageContainer
+        <main className="w-full min-h-screen flex flex-col justify-center items-center p-4 bg-gray-100">
 
-            <main className="pageContainer menuPageContainer">
+            {/* loginContentWrapper */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-10 max-w-md w-full relative">
 
-                {/* --- 1. ХЕДЕР З ФОНОМ (ПОВНА ШИРИНА) --- */}
-                <div className="menuHeaderImage updatedHeader">
-                    <Image
-                        src="/images/restaurant_nazva.jpg"
-                        alt="Фон закладу"
-                        layout="fill"
-                        objectFit="cover"
-                        className="menuBackground"
-                    />
+                {/* loginCloseBtn */}
+                <Link href="/" className="absolute top-4 right-4 text-2xl text-gray-400 no-underline font-bold hover:text-gray-600">×</Link>
 
-                    {/* Накладання іконок: ОБМЕЖЕНО width: var(--card-max-width) */}
-                    <div className="headerIconsOverlay" style={{maxWidth: 'var(--card-max-width)', margin: '0 auto'}}>
-                        <button onClick={() => router.back()} className="headerIconBtn backBtn">
-                            <ArrowLeft size={24} />
-                        </button>
-                        <div className="headerIconsRight">
-                            <button className="headerIconBtn settingsBtn">
-                                <Settings size={20} />
-                            </button>
-                            <Link href="/profile" className="headerIconBtn profileBtn" onClick={() => setIsProfileOpen(true)}>
-                                <span className="profileLetter">{profileInitial}</span>
-                            </Link>
+                {/* loginTitle */}
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-900 text-left">Вхід</h1>
+
+                <form onSubmit={handleLogin}>
+
+                    {/* inputGroup */}
+                    <div className="mb-4 sm:mb-5 text-left">
+                        {/* loginInput */}
+                        <div className="relative">
+                            <input
+                                type="email"
+                                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="Введіть e-mail"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                            <Mail size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         </div>
                     </div>
-                </div>
-
-                {/* --- 2. КАРТКА ПРОФІЛЮ (ВИКОРИСТОВУЄ var(--card-max-width)) --- */}
-                <div className="relative z-10 w-full" style={{maxWidth: 'var(--card-max-width)', margin: '0 auto'}}>
-                    <div className="menuProfileCard updatedCard -mt-20">
-                        <div className="cardTopRow">
-
-                            <div className="cardAvatar"></div>
-
-                            <div className="cardInfo">
-                                <h2>{establishmentName}</h2>
-                                <p className="cardRating">{restaurantRating}</p>
-                                <span className="cardAddress">{restaurantAddress}</span>
-                            </div>
-                            <span className="cardLevel">{userLevel}</span> {/* <--- ВИКОРИСТАННЯ ДИНАМІЧНОГО РІВНЯ */}
-                        </div>
-                        <div className="cardProgressBarContainer">
-                            <div className="cardProgressBarFill" style={{ width: '70%' }}></div>
+                    {/* inputGroup */}
+                    <div className="mb-4 sm:mb-5 text-left">
+                        <div className="relative">
+                            <input
+                                type="password"
+                                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="Пароль"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            <Lock size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         </div>
                     </div>
-                </div>
 
-                {/* --- 3. СПИСОК КАТЕГОРІЙ МЕНЮ (ВИКОРИСТОВУЄ var(--nav-max-width)) --- */}
-                <div className="primaryMenuContentWrapper updatedDesign pt-8">
-                    <nav className="menuNavList updatedList">
-                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Гарячі страви`} className="menuNavItem updatedItem">
-                            Кухня
-                        </Link>
-                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Напої`} className="menuNavItem updatedItem">
-                            Напої
-                        </Link>
-                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Алкогольні напої`} className="menuNavItem updatedItem">
-                            Алкоголь
-                        </Link>
-                        <Link href={`/menu-secondary?id=${RESTAURANT_ID}&category=Мерч`} className="menuNavItem updatedItem">
-                            Мерч
-                        </Link>
-                    </nav>
+                    {/* loginError */}
+                    {error && <p className="text-red-700 bg-red-100 border border-red-200 rounded-lg p-3 text-center text-sm mt-4">{error}</p>}
+
+                    {/* loginSubmitBtn */}
+                    <button type="submit" className="w-full p-3 sm:p-4 border-none rounded-lg bg-green-500 text-white text-base sm:text-lg font-bold cursor-pointer mt-4 transition hover:bg-green-600 flex items-center justify-center gap-2">
+                        <LogIn size={20} /> Вхід
+                    </button>
+                </form>
+
+                {/* googleBtn */}
+                <button
+                    className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm sm:text-base font-medium cursor-pointer mt-4 flex items-center justify-center gap-2 transition hover:bg-gray-50"
+                    onClick={handleGoogleSignIn}
+                >
+                    <span className="font-bold text-lg text-red-600">G</span> Продовжити через Google
+                </button>
+
+                {/* loginLinks */}
+                <div className="flex justify-between mt-6 sm:mt-8 flex-wrap gap-2">
+                    {/* loginLink (для власника) */}
+                    <Link href="/login?role=owner" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
+                        Увійти як власник
+                    </Link>
+                    {/* loginLink (для реєстрації) */}
+                    <Link href="/signup" className="text-gray-600 underline text-sm cursor-pointer transition hover:text-black">
+                        Ще не зареєстрований?
+                    </Link>
                 </div>
-            </main>
-        </>
+            </div>
+        </main>
     );
 }

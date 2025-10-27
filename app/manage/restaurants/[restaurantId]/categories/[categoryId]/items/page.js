@@ -6,9 +6,9 @@ import { useSession } from 'next-auth/react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import AddItemModal from '@/components/AddItemModal'; // Абсолютний імпорт
-import EditItemModal from '@/components/EditItemModal'; // Абсолютний імпорт
-import { ChevronLeft, Plus, Settings, Trash2, User } from 'lucide-react'; // Переконайтесь, що User тут є
+import AddItemModal from '@/components/AddItemModal';
+import EditItemModal from '@/components/EditItemModal';
+import { ChevronLeft, Plus, Settings, Trash2, User } from 'lucide-react';
 
 export default function ManageItemsPage() {
     const [items, setItems] = useState([]);
@@ -29,6 +29,7 @@ export default function ManageItemsPage() {
                 .then((res) => {
                     if (!res.ok) {
                         if (res.status === 404 || res.status === 401) {
+                            // Якщо категорія/ресторан не знайдені або доступ заборонено
                             router.push(`/manage/restaurants/${restaurantId}/categories`);
                         }
                         throw new Error('Failed to fetch items');
@@ -37,7 +38,7 @@ export default function ManageItemsPage() {
                 })
                 .then(setItems)
                 .catch(console.error);
-            // TODO: Отримати назву категорії
+            // TODO: Отримати назву категорії (потрібен окремий fetch)
         }
     }, [status, restaurantId, categoryId, router]);
 
@@ -58,9 +59,8 @@ export default function ManageItemsPage() {
     };
 
     const handleDeleteItem = async (itemId) => {
-        // --- 👇 ДОДАНО LOG 👇 ---
         console.log(`Attempting to delete item: restaurantId=${restaurantId}, categoryId=${categoryId}, itemId=${itemId}`);
-        // --------------------------
+        
         if (!confirm('Ви впевнені, що хочете видалити цей товар?')) {
             return;
         }
@@ -69,12 +69,10 @@ export default function ManageItemsPage() {
         try {
             const res = await fetch(apiUrl, { method: 'DELETE' });
             if (!res.ok) {
-                // Спробуємо прочитати JSON помилку з відповіді
                 let errorData = { error: 'Failed to delete item' };
                 try {
                     errorData = await res.json();
                 } catch (jsonError) {
-                    // Якщо відповідь не JSON, використовуємо статус
                     errorData.error = `Server responded with status ${res.status}`;
                 }
                 throw new Error(errorData.error);
@@ -88,10 +86,20 @@ export default function ManageItemsPage() {
 
 
     if (status === 'loading') {
-        return <main className="pageContainer menuPageContainer"><div className="loadingText">Завантаження...</div></main>;
+        // pageContainer + menuPageContainer + loadingText
+        return (
+            <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+                <div className="p-8 text-center text-gray-500">Завантаження...</div>
+            </main>
+        );
     }
     if (status === 'unauthenticated') {
-        return <main className="pageContainer menuPageContainer"><div className="loadingText">Доступ заборонено.</div></main>;
+        // pageContainer + menuPageContainer + loadingText
+        return (
+            <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+                <div className="p-8 text-center text-gray-500">Доступ заборонено.</div>
+            </main>
+        );
     }
 
     return (
@@ -112,45 +120,57 @@ export default function ManageItemsPage() {
                 categoryId={categoryId}
             />
 
-            <main className="pageContainer menuPageContainer">
-                <div className="manageContentWrapper">
-                    <header className="manageHeader">
-                        <div className="manageHeaderTitle"><h1>MANAGER MODE</h1></div>
-                        <div className="manageHeaderUser">
-              <span className="profileIcon">
-                 {session?.user?.image ? (
-                     <img src={session.user.image} alt="profile" className="headerProfileImage small" />
-                 ) : (
-                     <User size={22} strokeWidth={2.5} />
-                 )}
-               </span>
+            {/* pageContainer + menuPageContainer */}
+            <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+                {/* manageContentWrapper */}
+                <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
+                    
+                    {/* manageHeader */}
+                    <header className="flex justify-between items-center mb-8 pb-6 border-b border-gray-200 flex-wrap gap-4">
+                        <div className="manageHeaderTitle">
+                            <h1 className="m-0 text-sm font-semibold tracking-wider text-gray-600 uppercase">MANAGER MODE</h1>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                           {/* profileIcon */}
+                           {session?.user?.image ? (
+                                <img src={session.user.image} alt="profile" className="w-6 h-6 rounded-full object-cover" />
+                            ) : (
+                                <User size={22} strokeWidth={2.5} className="text-gray-500"/>
+                            )}
                         </div>
                     </header>
 
-                    <section className="manageSection">
-                        <div className="manageSectionHeader">
+                    {/* manageSection */}
+                    <section className="mb-8 sm:mb-12">
+                        <div className="flex justify-between items-start mb-6 gap-4 flex-wrap">
                             <div>
-                                <Link href={`/manage/restaurants/${restaurantId}/categories`} className="manageBackButton">
-                                    <ChevronLeft size={16} style={{ display:'inline-block', marginRight: '0.25rem', verticalAlign: 'middle', marginTop: '-2px'}}/>
+                                {/* manageBackButton */}
+                                <Link href={`/manage/restaurants/${restaurantId}/categories`} className="inline-flex items-center text-gray-600 no-underline text-sm mb-1 hover:underline">
+                                    <ChevronLeft size={16} className="mr-1" />
                                     Manage Categories
                                 </Link>
-                                <h2>Manage Items in {categoryName || `Category #${categoryId}`}</h2>
-                                <p>Add, edit, or delete items in this category</p>
+                                
+                                <h2><strong className="text-2xl sm:text-3xl font-bold">Manage Items</strong> in {categoryName || `Category #${categoryId}`}</h2>
+                                <p className="m-0 text-gray-500 text-base">Add, edit, or delete items in this category</p>
                             </div>
+                            {/* manageAddButton */}
                             <button
-                                className="manageAddButton"
+                                className="bg-indigo-600 text-white border-none rounded-lg px-5 py-3 text-sm sm:text-base font-medium cursor-pointer whitespace-nowrap transition hover:bg-indigo-700 flex items-center gap-2"
                                 onClick={() => setIsAddModalOpen(true)}
                             >
-                                <Plus size={18} strokeWidth={3} style={{ marginRight: '0.5rem', verticalAlign: 'middle', marginTop: '-2px' }} />
+                                <Plus size={18} strokeWidth={3} />
                                 Add Item
                             </button>
                         </div>
 
-                        <div className="manageItemList">
+                        {/* manageItemList */}
+                        <div className="flex flex-col gap-4">
                             {Array.isArray(items) && items.length > 0 ? (
                                 items.map((item) => (
-                                    <div key={item.id} className="manageItemCard">
-                                        <div className="manageItemImage">
+                                    // manageItemCard
+                                    <div key={item.id} className="bg-white rounded-lg shadow-md flex items-center p-4 gap-4">
+                                        {/* manageItemImage */}
+                                        <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
                                             <Image
                                                 src={item.imageUrl || '/images/placeholder.jpg'}
                                                 alt={item.name}
@@ -158,24 +178,32 @@ export default function ManageItemsPage() {
                                                 objectFit="cover"
                                             />
                                         </div>
-                                        <div className="manageItemInfo">
-                                            <h3>{item.name}</h3>
-                                            <p>{item.description || 'No description'}</p>
-                                            <span className="manageItemPrice">{item.price.toFixed(2)} грн</span>
-                                            {item.calories != null && <span className="manageItemCalories"> / {item.calories} cal</span>}
+                                        {/* manageItemInfo */}
+                                        <div className="flex-grow text-left overflow-hidden">
+                                            <h3 className="m-0 mb-0.5 text-base sm:text-lg font-semibold truncate">{item.name}</h3>
+                                            <p className="m-0 mb-1 text-gray-500 text-sm truncate">{item.description || 'No description'}</p>
+                                            <div className="flex items-center gap-1 text-sm">
+                                                {/* manageItemPrice */}
+                                                <span className="font-semibold text-gray-800">{item.price.toFixed(2)} грн</span>
+                                                {/* manageItemCalories */}
+                                                {item.calories != null && <span className="text-xs text-gray-400"> / {item.calories} cal</span>}
+                                            </div>
                                         </div>
-                                        <div className="manageItemActions">
-                                            <button className="actionIcon" onClick={() => openEditModal(item)}>
+                                        {/* manageItemActions */}
+                                        <div className="flex items-center gap-3 flex-shrink-0">
+                                            {/* actionIcon */}
+                                            <button className="text-gray-500 transition hover:text-indigo-600" onClick={() => openEditModal(item)}>
                                                 <Settings size={20} />
                                             </button>
-                                            <button className="actionIcon" onClick={() => handleDeleteItem(item.id)}>
+                                            <button className="text-gray-500 transition hover:text-red-500" onClick={() => handleDeleteItem(item.id)}>
                                                 <Trash2 size={20} />
                                             </button>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <p className="noDataText">No items added yet for this category.</p>
+                                // noDataText
+                                <p className="text-gray-500 text-center p-8">No items added yet for this category.</p>
                             )}
                         </div>
                     </section>

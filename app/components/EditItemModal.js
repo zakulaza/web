@@ -3,7 +3,6 @@
 
 import { useState, useEffect } from 'react';
 
-// Дуже схожий на AddItemModal, але отримує дані існуючого товару
 export default function EditItemModal({ isOpen, onClose, onItemUpdated, itemToEdit, restaurantId, categoryId }) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -18,16 +17,16 @@ export default function EditItemModal({ isOpen, onClose, onItemUpdated, itemToEd
         if (itemToEdit) {
             setName(itemToEdit.name || '');
             setDescription(itemToEdit.description || '');
-            setPrice(itemToEdit.price?.toString() || ''); // Перетворюємо на рядок для input type="number"
+            setPrice(itemToEdit.price?.toString() || '');
             setCalories(itemToEdit.calories?.toString() || '');
             setImageUrl(itemToEdit.imageUrl || '');
         }
-    }, [itemToEdit]); // Ефект спрацює, коли зміниться itemToEdit
+    }, [itemToEdit]);
 
     const handleClose = () => {
         setError('');
         setIsLoading(false);
-        onClose(); // Просто закриваємо, не скидаючи поля одразу
+        onClose();
     };
 
     const handleSubmit = async (e) => {
@@ -35,7 +34,6 @@ export default function EditItemModal({ isOpen, onClose, onItemUpdated, itemToEd
         setError('');
         setIsLoading(true);
 
-        // URL для оновлення конкретного товару
         const apiUrl = `/api/manage/restaurants/${restaurantId}/categories/${categoryId}/items/${itemToEdit.id}`;
 
         const parsedPrice = parseFloat(price);
@@ -65,7 +63,7 @@ export default function EditItemModal({ isOpen, onClose, onItemUpdated, itemToEd
                 throw new Error(data.error || 'Failed to update item');
             }
 
-            onItemUpdated(data); // Передаємо оновлений товар батьківському компоненту
+            onItemUpdated(data);
             handleClose();
 
         } catch (err) {
@@ -75,48 +73,61 @@ export default function EditItemModal({ isOpen, onClose, onItemUpdated, itemToEd
         }
     };
 
-    if (!isOpen || !itemToEdit) { // Перевіряємо і isOpen і itemToEdit
+    if (!isOpen || !itemToEdit) {
         return null;
     }
 
     return (
-        <div className="profileOverlay" onClick={handleClose}>
-            <div className="profileModal" onClick={(e) => e.stopPropagation()}>
-                <button className="profileCloseButton" onClick={handleClose}>×</button>
-                <h2 className="modalTitle">Edit Item</h2> {/* Змінено заголовок */}
+        // profileOverlay
+        <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50" onClick={handleClose}>
+            {/* profileModal */}
+            <div className="bg-white rounded-xl w-full max-w-md shadow-2xl relative flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                {/* profileCloseButton */}
+                <button className="absolute top-2 right-3 text-2xl text-gray-400 cursor-pointer z-10 hover:text-gray-600" onClick={handleClose}>×</button>
+                
+                {/* profileModalContent (адаптований) */}
+                <div className="p-6 overflow-y-auto">
+                    {/* modalTitle */}
+                    <h2 className="text-2xl font-bold mb-6 text-gray-900">Edit Item</h2>
 
-                <form onSubmit={handleSubmit}>
-                    {/* Поля форми (ідентичні AddItemModal, але з value) */}
-                    <div className="inputGroup">
-                        <label htmlFor="editItemName">Item Name</label>
-                        <input id="editItemName" type="text" className="loginInput" placeholder="Enter item name" value={name} onChange={(e) => setName(e.target.value)} required />
-                    </div>
-                    <div className="inputGroup">
-                        <label htmlFor="editItemDesc">Description (optional)</label>
-                        <textarea id="editItemDesc" className="loginInput" placeholder="Describe the item..." value={description} onChange={(e) => setDescription(e.target.value)} rows="2" />
-                    </div>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <div className="inputGroup" style={{ flex: 1 }}>
-                            <label htmlFor="editItemPrice">Price (грн)</label>
-                            <input id="editItemPrice" type="number" step="0.01" className="loginInput" placeholder="e.g., 150.50" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                    <form onSubmit={handleSubmit}>
+                        {/* inputGroup */}
+                        <div className="mb-5 text-left">
+                            <label htmlFor="editItemName" className="block font-medium mb-2 text-sm text-gray-700">Item Name</label>
+                            <input id="editItemName" type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter item name" value={name} onChange={(e) => setName(e.target.value)} required />
                         </div>
-                        <div className="inputGroup" style={{ flex: 1 }}>
-                            <label htmlFor="editItemCal">Calories (optional)</label>
-                            <input id="editItemCal" type="number" className="loginInput" placeholder="e.g., 350" value={calories} onChange={(e) => setCalories(e.target.value)} />
+                        <div className="mb-5 text-left">
+                            <label htmlFor="editItemDesc" className="block font-medium mb-2 text-sm text-gray-700">Description (optional)</label>
+                            <textarea id="editItemDesc" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[80px]" placeholder="Describe the item..." value={description} onChange={(e) => setDescription(e.target.value)} rows="2" />
                         </div>
-                    </div>
-                    <div className="inputGroup">
-                        <label htmlFor="editItemImg">Image URL (optional)</label>
-                        <input id="editItemImg" type="text" className="loginInput" placeholder="https://example.com/image.jpg" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
-                    </div>
+                        
+                        {/* Рядок з ціною та калоріями */}
+                        <div className="flex gap-4">
+                            <div className="mb-5 text-left flex-1">
+                                <label htmlFor="editItemPrice" className="block font-medium mb-2 text-sm text-gray-700">Price (грн)</label>
+                                <input id="editItemPrice" type="number" step="0.01" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., 150.50" value={price} onChange={(e) => setPrice(e.target.value)} required />
+                            </div>
+                            <div className="mb-5 text-left flex-1">
+                                <label htmlFor="editItemCal" className="block font-medium mb-2 text-sm text-gray-700">Calories (optional)</label>
+                                <input id="editItemCal" type="number" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., 350" value={calories} onChange={(e) => setCalories(e.target.value)} />
+                            </div>
+                        </div>
 
-                    {error && <p className="loginError">{error}</p>}
+                        <div className="mb-5 text-left">
+                            <label htmlFor="editItemImg" className="block font-medium mb-2 text-sm text-gray-700">Image URL (optional)</label>
+                            <input id="editItemImg" type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="https://example.com/image.jpg" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+                        </div>
 
-                    <div className="modalActions">
-                        <button type="button" className="modalButton secondary" onClick={handleClose} disabled={isLoading}>Скасувати</button>
-                        <button type="submit" className="modalButton primary" disabled={isLoading}>{isLoading ? 'Збереження...' : 'Зберегти Зміни'}</button> {/* Змінено текст кнопки */}
-                    </div>
-                </form>
+                        {/* loginError */}
+                        {error && <p className="text-red-700 bg-red-100 border border-red-300 rounded-lg p-3 text-sm text-center mt-4">{error}</p>}
+
+                        {/* modalActions */}
+                        <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-gray-200">
+                            <button type="button" className="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-60 disabled:cursor-not-allowed" onClick={handleClose} disabled={isLoading}>Скасувати</button>
+                            <button type="submit" className="px-4 py-2 rounded-lg font-medium text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed" disabled={isLoading}>{isLoading ? 'Збереження...' : 'Зберегти Зміни'}</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

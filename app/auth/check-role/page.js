@@ -27,8 +27,12 @@ export default function CheckRolePage() {
 
     // Поки йде перевірка, показуємо завантаження
     return (
-        <main className="pageContainer menuPageContainer">
-            <div style={{ padding: '2rem', textAlign: 'center' }}>Перевірка ролі...</div>
+        // pageContainer + menuPageContainer -> Tailwind
+        <main className="w-full min-h-screen flex flex-col bg-white justify-start">
+            {/* style={{...}} -> Tailwind */}
+            <div className="p-8 text-center text-gray-600">
+                Перевірка ролі...
+            </div>
         </main>
     );
 }
